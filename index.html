@@ -1,0 +1,2216 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SF Cafes — Work-friendly coffee shops</title>
+<meta name="description" content="A curated guide to the best work-friendly coffee shops in San Francisco. Wifi, outlets, vibes — rated and mapped." />
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,500,100;1,9..144,400;1,9..144,500;1,9..144,600&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  /* Foggy Modern SF palette (light) */
+  --bg: #ebebe5;
+  --bg-2: #dcdcd2;
+  --paper: #ffffff;
+  --ink: #161c22;
+  --ink-2: #525a62;
+  --ink-3: #8a9097;
+  --rule: #d2d2c8;
+  --accent: #d24a2a;
+  --accent-2: #2e6478;
+  --good: #4f7c3e;
+  --mid-good: #9aa44a;
+  --mid: #d99a2e;
+  --bad: #b03b2b;
+}
+body.dark {
+  /* Foggy Modern SF palette (dark) */
+  --bg: #1c2125;
+  --bg-2: #14181c;
+  --paper: #252c33;
+  --ink: #ece9df;
+  --ink-2: #aaaca5;
+  --ink-3: #6c7077;
+  --rule: #3a4048;
+  --accent: #e96a44;
+  --accent-2: #6ba2b6;
+  --good: #82af6c;
+  --mid-good: #b6bd5a;
+  --mid: #e3a648;
+  --bad: #cd5444;
+}
+body.dark .leaflet-popup-content-wrapper { background: #252c33; color: #ece9df; }
+body.dark .leaflet-popup-tip { background: #252c33; }
+body.dark .leaflet-control-zoom a { background: #252c33 !important; color: #ece9df !important; border-bottom-color: #3a4048 !important; }
+body.dark .leaflet-control-attribution { background: rgba(28,33,37,0.7) !important; color: #aaaca5 !important; }
+body.dark .leaflet-control-attribution a { color: #ece9df !important; }
+body.dark .logo.has-icon { background: #e8e6db !important; border-color: #3a4048; }
+body.dark .pp-logo.has-icon { background: #e8e6db !important; }
+body.dark .tip-card,
+body.dark .signin-card { background: #1c2125; }
+body.dark .vibe-pop,
+body.dark .share-pop { background: #252c33; border-color: #3a4048; }
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; height: 100%; }
+body {
+  font-family: "Fraunces", "Iowan Old Style", Georgia, serif;
+  font-size: 15px;
+  color: var(--ink);
+  background: var(--bg);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+
+.app {
+  display: grid;
+  grid-template-columns: 440px 1fr;
+  height: 100vh;
+}
+
+/* SIDEBAR */
+.sidebar {
+  background: var(--bg);
+  border-right: 1px solid var(--rule);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.sidebar header.bar {
+  padding: 22px 24px 14px;
+  display: flex; align-items: baseline; justify-content: space-between;
+}
+.brand {
+  font-family: "Fraunces", serif;
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  font-variation-settings: "SOFT" 100;
+}
+.brand .accent { color: var(--accent); font-style: italic; font-weight: 500; }
+.signin {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--ink-2);
+  display: flex; align-items: center; gap: 6px;
+}
+.signin svg { color: var(--ink-2); }
+
+.search-wrap { padding: 0 24px 14px; }
+.search {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: 9px 16px;
+}
+.search input {
+  border: 0; outline: 0; background: transparent;
+  width: 100%; font-size: 14px; color: var(--ink);
+  font-family: "Space Grotesk", sans-serif;
+}
+.search input::placeholder { color: var(--ink-3); }
+.search svg { width: 14px; height: 14px; color: var(--ink-3); flex-shrink: 0; }
+
+.toolbar {
+  padding: 0 24px 14px;
+  display: flex; flex-direction: column; gap: 10px;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--ink-2);
+}
+.toolbar-row {
+  display: flex; gap: 14px; align-items: center; flex-wrap: wrap;
+}
+.t-item svg { width: 11px; height: 11px; }
+.t-item {
+  display: inline-flex; align-items: center; gap: 7px;
+  cursor: pointer; user-select: none;
+}
+.t-item .dot {
+  width: 8px; height: 8px; border-radius: 999px;
+  background: var(--ink-3);
+}
+.t-item.on .dot { background: var(--good); }
+.t-item.on { color: var(--ink); }
+.t-item.on svg { color: var(--accent); }
+.t-item:hover { color: var(--ink); }
+
+.t-select {
+  position: relative;
+  display: inline-flex; align-items: center; gap: 6px;
+  cursor: pointer;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  padding: 6px 10px 6px 12px;
+  border-radius: 4px;
+  user-select: none;
+}
+.t-select.active {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+.t-select > svg,
+.t-select > .t-current,
+.t-select > .t-prefix {
+  pointer-events: none;
+}
+.t-current {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink-2);
+}
+.t-select.active .t-current { color: var(--ink); }
+.t-prefix { color: var(--ink-3); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; }
+.t-clear-x {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 14px; height: 14px; border-radius: 999px;
+  background: rgba(0,0,0,0.06);
+  color: var(--ink);
+  font-size: 9px;
+  pointer-events: auto;
+  cursor: pointer;
+  margin-left: 2px;
+}
+.t-clear-x:hover { background: rgba(0,0,0,0.12); }
+.t-select-input {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  border: 0;
+  font-size: 16px; /* prevent mobile zoom */
+}
+/* + Add pill (Nominate trigger) */
+.t-add {
+  background: var(--accent);
+  color: #fff;
+  border: 0;
+  border-radius: 4px;
+  padding: 7px 14px;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 1px 3px rgba(210,74,42,0.22);
+}
+.t-add:hover { filter: brightness(1.05); }
+.t-add:active { transform: translateY(1px); }
+
+/* Sidebar footer */
+.sidebar-foot {
+  padding: 12px 24px 14px;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  background: var(--bg);
+}
+.sidebar-foot a {
+  color: var(--ink-2);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+}
+.sidebar-foot a:hover { color: var(--accent); }
+.sidebar-foot svg { width: 12px; height: 12px; color: var(--accent); }
+
+/* Clear-all button */
+.t-clear {
+  display: inline-flex; align-items: center; gap: 5px;
+  cursor: pointer;
+  color: var(--ink-2);
+  background: transparent;
+  border: 0;
+  padding: 6px 0;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  margin-left: auto;
+  opacity: 0.45;
+  pointer-events: none;
+  transition: opacity 0.15s;
+}
+.t-clear.show { opacity: 1; pointer-events: auto; }
+.t-clear:hover { color: var(--ink); }
+.t-clear svg { width: 11px; height: 11px; }
+
+.scroll {
+  flex: 1; overflow-y: auto;
+  padding: 0 24px 28px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--rule) transparent;
+}
+.scroll::-webkit-scrollbar { width: 8px; }
+.scroll::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 4px; }
+
+/* ITEM */
+.item {
+  padding: 16px 0;
+  border-top: 1px solid var(--rule);
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: 36px 1fr auto;
+  column-gap: 14px;
+  align-items: start;
+  transition: background 0.12s ease;
+}
+.item:hover { background: rgba(210,74,42,0.05); }
+.item.active { background: rgba(210,74,42,0.09); }
+
+.item .logo {
+  width: 36px; height: 36px;
+  border-radius: 999px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: "Fraunces", serif;
+  font-weight: 600;
+  font-style: italic;
+  font-size: 17px;
+  color: #fff;
+  margin-top: 2px;
+  overflow: hidden;
+  position: relative;
+}
+.logo.has-icon {
+  background: #ffffff;
+  border: 1px solid var(--rule);
+}
+.logo .logo-letter { line-height: 1; }
+.pp-logo.has-icon { border: 1px solid var(--rule); }
+.item h3 {
+  margin: 0;
+  font-family: "Fraunces", serif;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+.item .score {
+  font-family: "Fraunces", serif;
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  margin-top: 2px;
+}
+.meta-line {
+  margin-top: 5px;
+  font-family: "JetBrains Mono", "Menlo", monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  display: flex; flex-wrap: wrap; gap: 7px; align-items: center;
+}
+.meta-line .sep { color: var(--ink-3); }
+.meta-line .stat { display: inline-flex; align-items: center; gap: 5px; }
+.meta-line .stat .pulse {
+  width: 7px; height: 7px; border-radius: 999px; background: var(--good);
+}
+.meta-line .stat.closed .pulse { background: var(--ink-3); }
+
+.rating-line {
+  margin-top: 8px;
+  display: flex; align-items: center; gap: 8px;
+  font-family: "JetBrains Mono", "Menlo", monospace;
+  font-size: 11px;
+  color: var(--ink-2);
+}
+.stars {
+  display: inline-flex; gap: 1px;
+  color: var(--accent);
+}
+.stars svg { width: 13px; height: 13px; display: block; }
+.stars .empty { color: var(--rule); }
+.rating-line .num {
+  color: var(--ink-3);
+  letter-spacing: 0.04em;
+}
+.breakdown {
+  margin-top: 6px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+.breakdown b { color: var(--ink-2); font-weight: 500; }
+.breakdown .active b { color: var(--accent); font-weight: 600; }
+.breakdown .sep { color: var(--rule); }
+.breakdown .vt {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-3);
+}
+/* Vibe vote badge */
+.vibe-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  padding: 3px 8px;
+  border-radius: 999px;
+  margin-left: 10px;
+  vertical-align: 3px;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: 1px solid transparent;
+  background: transparent;
+  transition: background 0.15s, border-color 0.15s;
+}
+.vibe-badge.quiet  { color: var(--accent-2); background: rgba(46,100,120,0.10); border-color: rgba(46,100,120,0.28); }
+.vibe-badge.lively { color: var(--accent);   background: rgba(210,74,42,0.10);  border-color: rgba(210,74,42,0.28);  }
+.vibe-badge:hover  { filter: brightness(0.95); }
+.vibe-badge .tick {
+  width: 8px; height: 8px; border-radius: 999px;
+  background: currentColor;
+  opacity: 0;
+}
+.vibe-badge.voted .tick { opacity: 1; }
+.modal-name .vibe-badge { vertical-align: 6px; font-size: 11px; padding: 4px 10px; }
+
+/* Vibe vote popover */
+.vibe-pop {
+  position: absolute;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  box-shadow: 0 6px 24px rgba(20,14,6,0.18);
+  padding: 6px;
+  z-index: 3000;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 180px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+}
+.vibe-pop-title {
+  padding: 6px 8px 4px;
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.vibe-pop button {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px;
+  background: transparent; border: 0;
+  padding: 8px 10px;
+  text-align: left;
+  font-family: inherit;
+  font-size: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--ink);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.vibe-pop button:hover { background: var(--bg-2); }
+.vibe-pop button.active { background: rgba(210,74,42,0.09); color: var(--accent); }
+.vibe-pop .ct {
+  font-size: 11px;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.vibe-pop .you {
+  margin-top: 4px;
+  padding: 6px 8px;
+  font-size: 10px;
+  color: var(--ink-3);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-top: 1px solid var(--rule);
+}
+
+/* DETAIL MODAL */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(20, 14, 6, 0.32);
+  display: none;
+  align-items: flex-start;
+  justify-content: center;
+  z-index: 2000;
+  padding: 36px 20px;
+  overflow-y: auto;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--bg);
+  width: 100%;
+  max-width: 560px;
+  border-radius: 10px;
+  position: relative;
+  box-shadow: 0 24px 60px rgba(20, 28, 38, 0.22);
+  border: 1px solid var(--rule);
+  overflow: hidden;
+}
+.modal-close {
+  position: absolute;
+  top: 16px; right: 16px;
+  width: 32px; height: 32px;
+  border-radius: 999px;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: var(--ink-2);
+  z-index: 5;
+}
+.modal-close:hover { color: var(--ink); }
+.modal-head {
+  padding: 28px 32px 22px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+}
+.modal-name {
+  margin: 0 0 14px;
+  font-family: "Fraunces", serif;
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  max-width: 16ch;
+}
+.modal-addr {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  margin-bottom: 8px;
+}
+.modal-status {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+}
+.modal-status .stat .pulse {
+  display: inline-block;
+  width: 7px; height: 7px; border-radius: 999px; background: var(--good);
+  margin-right: 5px;
+}
+.modal-status .stat.closed .pulse { background: var(--ink-3); }
+.modal-status a {
+  color: var(--accent);
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.modal-aside {
+  display: flex; flex-direction: column; align-items: flex-end; gap: 12px;
+  padding-right: 40px;
+}
+.modal-score {
+  font-family: "Fraunces", serif;
+  font-weight: 600;
+  font-size: 36px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.modal-actions { display: flex; gap: 14px; }
+.modal-actions button {
+  background: transparent; border: 0; cursor: pointer; color: var(--ink-3);
+  padding: 0;
+}
+.modal-actions button:hover { color: var(--ink); }
+.modal-actions svg { width: 18px; height: 18px; }
+
+.modal-section {
+  padding: 22px 32px;
+  border-top: 1px solid var(--rule);
+}
+.section-head {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-2);
+  margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+.section-head svg { width: 14px; height: 14px; color: var(--ink-2); }
+.section-head-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px;
+}
+.section-head-row h3 {
+  margin: 0;
+  font-family: "Fraunces", serif;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.cat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 36px;
+  row-gap: 10px;
+}
+.cat-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: end;
+  gap: 8px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 13px;
+}
+.cat-row .lbl { color: var(--ink); }
+.cat-row .leader {
+  border-bottom: 1px dotted var(--ink-3);
+  height: 1px;
+  margin-bottom: 5px;
+}
+.cat-row .val {
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+.amen-row {
+  display: flex; align-items: center; gap: 12px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 14px;
+  margin-bottom: 10px;
+  color: var(--ink);
+}
+.amen-row .box {
+  width: 18px; height: 18px;
+  border: 1px solid var(--accent);
+  border-radius: 2px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--accent);
+  font-size: 12px;
+}
+.amen-row.unknown .box {
+  border-color: var(--ink-3); color: var(--ink-3);
+}
+.amen-row.unknown { color: var(--ink-2); }
+.amen-row .note { color: var(--ink-3); font-size: 12px; margin-left: 4px; }
+
+.add-link {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 13px;
+  color: var(--accent);
+  display: inline-block;
+  margin-top: 4px;
+}
+
+.add-photo-btn {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 10px 16px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  color: var(--ink);
+  cursor: pointer;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.add-photo-btn:hover { border-color: var(--ink-3); }
+.add-photo-btn svg { width: 14px; height: 14px; }
+
+.review {
+  border-left: 2px solid var(--rule);
+  padding: 4px 0 4px 14px;
+  margin-top: 8px;
+}
+.review-head {
+  display: flex; align-items: center; gap: 8px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+}
+.review-head .avatar {
+  width: 22px; height: 22px;
+  border-radius: 999px;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff;
+  font-family: "Fraunces", serif;
+  font-size: 11px;
+  font-style: italic;
+  font-weight: 600;
+}
+.review-head .user { color: var(--ink); font-weight: 500; }
+.review-head .right {
+  margin-left: auto;
+  color: var(--accent);
+}
+.review-head .date { color: var(--ink-3); margin-left: 10px; }
+.review-body {
+  margin: 8px 0 0;
+  font-family: "Fraunces", serif;
+  font-style: italic;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.rate-spot {
+  display: block;
+  width: calc(100% - 64px);
+  margin: 0 32px 26px;
+  background: transparent;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  padding: 14px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.rate-spot:hover { background: rgba(193, 72, 27, 0.06); }
+.rate-spot svg { width: 14px; height: 14px; color: var(--accent); }
+
+.stars-row {
+  display: inline-flex; gap: 2px; color: var(--accent);
+}
+.stars-row svg { width: 14px; height: 14px; }
+.stars-row .empty { color: var(--rule); }
+
+/* SMALL AUX MODALS (coffee, nominate) */
+.modal-overlay.sm { align-items: center; padding: 24px; }
+.modal.sm {
+  max-width: 480px;
+  padding: 28px 32px 32px;
+  border-radius: 10px;
+}
+.modal.sm .modal-close { top: 18px; right: 18px; }
+.modal.sm h2 {
+  margin: 0 0 0;
+  font-family: "Fraunces", serif;
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+.modal.sm .sub {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  margin: 14px 0 0;
+  line-height: 1.7;
+}
+.modal.sm hr {
+  border: 0;
+  border-top: 1px solid var(--rule);
+  margin: 18px 0;
+}
+.tip-card {
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 22px 18px;
+  text-align: center;
+  background: var(--paper);
+}
+.tip-card .icon {
+  font-size: 20px;
+  margin-bottom: 4px;
+  color: var(--ink-2);
+}
+.tip-card .icon svg { width: 22px; height: 22px; display: inline-block; }
+.tip-card .title {
+  font-family: "Fraunces", serif;
+  font-size: 19px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.tip-card .price {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  color: var(--ink-3);
+  letter-spacing: 0.04em;
+}
+.custom-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  margin-bottom: 10px;
+}
+.custom-tip {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+}
+.custom-tip-input {
+  flex: 1;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 0 14px;
+  background: var(--paper);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.custom-tip-input .currency { color: var(--ink-3); font-family: "JetBrains Mono", monospace; font-size: 14px; }
+.custom-tip-input input {
+  border: 0; outline: 0; background: transparent;
+  width: 100%;
+  font-family: "Fraunces", serif;
+  font-size: 17px;
+  color: var(--ink);
+  padding: 12px 0;
+}
+.tip-btn {
+  background: var(--accent);
+  color: #fff;
+  border: 0;
+  border-radius: 4px;
+  padding: 0 28px;
+  font-family: "Fraunces", serif;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: 500;
+}
+.tip-btn:hover { filter: brightness(1.05); }
+.tip-thanks {
+  font-family: "Fraunces", serif;
+  font-style: italic;
+  color: var(--good);
+  margin-top: 14px;
+  font-size: 14px;
+  text-align: center;
+  min-height: 20px;
+}
+
+.signin-card {
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 28px 20px;
+  text-align: center;
+  background: var(--paper);
+  margin-top: 22px;
+}
+.signin-title {
+  font-family: "Fraunces", serif;
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+.signin-sub {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  margin-bottom: 18px;
+  line-height: 1.6;
+}
+.signin-btn {
+  background: var(--accent);
+  color: #fff;
+  border: 0;
+  border-radius: 4px;
+  padding: 11px 22px;
+  font-family: "Fraunces", serif;
+  font-size: 15px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-weight: 500;
+}
+.signin-btn:hover { filter: brightness(1.05); }
+.signin-btn svg { width: 14px; height: 14px; }
+
+/* Vibe chip toggles */
+#t-quiet.on .dot  { background: var(--accent-2); }
+#t-lively.on .dot { background: var(--accent); }
+
+/* MAP */
+.map-area {
+  position: relative;
+  height: 100vh;
+}
+#map { height: 100%; width: 100%; background: var(--bg-2); }
+
+.map-toolbar {
+  position: absolute;
+  top: 18px; left: 18px;
+  display: flex; align-items: center;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 7px 14px;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  gap: 14px;
+}
+.map-toolbar .opt { cursor: pointer; color: var(--ink-3); position: relative; padding-bottom: 3px; }
+.map-toolbar .opt.on { color: var(--ink); }
+.map-toolbar .opt.on::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -4px;
+  height: 2px; background: var(--accent);
+}
+.map-toolbar .sep-v { width: 1px; height: 14px; background: var(--rule); }
+.map-toolbar .ic { width: 14px; height: 14px; color: var(--ink-3); cursor: pointer; }
+.map-toolbar .ic:hover { color: var(--ink); }
+
+.nominate {
+  position: absolute;
+  top: 18px; right: 18px;
+  background: var(--accent);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 4px;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  display: inline-flex; align-items: center; gap: 14px;
+  cursor: pointer;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(210,74,42,0.28);
+}
+.nominate .arrow { width: 22px; height: 1px; background: #fff; position: relative; display: inline-block; }
+.nominate .arrow::after {
+  content: ""; position: absolute; right: 0; top: -3px; width: 7px; height: 7px;
+  border-right: 1px solid #fff; border-top: 1px solid #fff;
+  transform: rotate(45deg);
+}
+
+.coffee-btn {
+  position: absolute;
+  bottom: 14px; right: 14px;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  padding: 7px 12px;
+  border-radius: 4px;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  display: inline-flex; align-items: center; gap: 8px;
+  z-index: 1000;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+/* GRID VIEW */
+.grid-view {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  overflow-y: auto;
+  padding: 70px 28px 32px;
+}
+.grid-head {
+  max-width: 1400px;
+  margin: 0 auto 18px;
+  display: flex; align-items: center; gap: 14px;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--ink-2);
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--rule);
+}
+.grid-filter-label {
+  color: var(--ink-3);
+  font-size: 11px;
+}
+.grid-sort { padding: 7px 12px; }
+.grid-count {
+  margin-left: auto;
+  color: var(--ink-3);
+  font-family: "JetBrains Mono", monospace;
+  letter-spacing: 0.04em;
+}
+.grid-inner {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.grid-card {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 16px 18px;
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.15s;
+  display: grid;
+  grid-template-columns: 36px 1fr auto;
+  column-gap: 14px;
+  align-items: start;
+}
+.grid-card:hover {
+  border-color: var(--ink-3);
+  transform: translateY(-1px);
+}
+.grid-card .name {
+  font-family: "Fraunces", serif;
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  margin: 0 0 4px;
+  color: var(--ink);
+}
+.grid-card .meta-line { margin-top: 4px; }
+.grid-card .breakdown {
+  margin-top: 8px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: var(--ink-2);
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+.grid-card .breakdown b { color: var(--ink); font-weight: 500; }
+.grid-card .breakdown .sep { color: var(--rule); }
+.grid-card .score {
+  font-family: "Fraunces", serif;
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  margin-top: 2px;
+}
+.grid-card .body { min-width: 0; }
+
+/* SHARE POPOVER */
+.share-pop {
+  position: absolute;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  box-shadow: 0 10px 32px rgba(20,28,38,0.18);
+  padding: 8px;
+  z-index: 3000;
+  min-width: 220px;
+  display: none;
+}
+.share-pop.open { display: block; }
+.share-pop-title {
+  font-family: "Fraunces", serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  padding: 6px 10px 10px;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 6px;
+}
+.share-opt {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: transparent;
+  border: 0;
+  padding: 9px 10px;
+  width: 100%;
+  text-align: left;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 13px;
+  color: var(--ink);
+  border-radius: 4px;
+  cursor: pointer;
+}
+.share-opt:hover { background: var(--bg-2); }
+.share-opt svg { width: 16px; height: 16px; color: var(--accent); flex-shrink: 0; }
+.share-opt .check { color: var(--good); display: none; margin-left: auto; font-size: 14px; }
+.share-opt.copied .check { display: inline; }
+.share-pop-note {
+  padding: 8px 10px 4px;
+  margin-top: 4px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.02em;
+  color: var(--ink-3);
+  border-top: 1px solid var(--rule);
+  line-height: 1.5;
+}
+
+/* PINS — small coffee cup markers */
+.pin { width: 22px; height: 22px; }
+.pin svg { width: 100%; height: 100%; display: block; filter: drop-shadow(0 1px 2px rgba(20,14,6,0.28)); }
+
+/* LEAFLET overrides */
+.leaflet-control-zoom {
+  border: 1px solid var(--rule) !important;
+  border-radius: 4px !important;
+  overflow: hidden;
+  margin-top: 70px !important;
+  margin-left: 18px !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06) !important;
+}
+.leaflet-control-zoom a {
+  background: var(--paper) !important;
+  color: var(--ink) !important;
+  border-bottom: 1px solid var(--rule) !important;
+  font-family: "Space Grotesk", sans-serif !important;
+}
+.leaflet-control-attribution {
+  background: rgba(255,255,255,0.7) !important;
+  font-family: "Space Grotesk", sans-serif !important;
+  font-size: 9px !important;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+.leaflet-popup-content {
+  margin: 12px 16px; font-family: "Fraunces", serif;
+  min-width: 180px;
+}
+.pp-row { display: flex; align-items: center; gap: 10px; }
+.pp-logo {
+  width: 26px; height: 26px; border-radius: 999px;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-style: italic; font-weight: 600; font-size: 13px;
+  font-family: "Fraunces", serif;
+  flex-shrink: 0;
+}
+.pp-name { font-weight: 600; font-size: 14px; flex: 1; line-height: 1.15; }
+.pp-score {
+  font-family: "Fraunces", serif;
+  font-weight: 600; font-size: 16px;
+  font-variant-numeric: tabular-nums;
+}
+.pp-meta {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-top: 6px;
+}
+
+/* MOBILE */
+@media (max-width: 800px) {
+  .app { grid-template-columns: 1fr; grid-template-rows: 320px 1fr; }
+  body { overflow: auto; }
+  .map-area { height: 320px; order: -1; }
+  .sidebar { border-right: 0; }
+  .nominate { padding: 7px 12px; font-size: 12px; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <header class="bar">
+      <div class="brand">SF cafes</div>
+      <a href="#" class="signin">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+        Sign in
+      </a>
+    </header>
+
+    <div class="search-wrap">
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="q" placeholder="Search spots…" />
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <div class="toolbar-row">
+        <span class="t-item" id="t-open" title="Open now"><span class="dot"></span> Open</span>
+        <span class="t-item" id="t-indie" title="Independents only">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-7H10v7H5a1 1 0 0 1-1-1z"/></svg>
+          Indie
+        </span>
+        <span class="t-item" id="t-quiet" title="Quiet vibes only"><span class="dot"></span> Quiet</span>
+      </div>
+      <div class="toolbar-row">
+        <span class="t-select" id="sort-pill">
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M7 3l-5 9h4v9h2v-9h4z"/><path d="M17 21l5-9h-4V3h-2v9h-4z"/></svg>
+          <span class="t-current" id="sort-label">Overall</span>
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M6 9l6 6 6-6z"/></svg>
+          <select id="sort" class="t-select-input">
+            <option value="overall">Overall</option>
+            <option value="work">Work</option>
+            <option value="food">Food</option>
+            <option value="coffee">Coffee</option>
+            <option value="vibes">Vibes</option>
+          </select>
+        </span>
+        <span class="t-select" id="hood-pill">
+          <span class="t-current" id="hood-label">Filter</span>
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M6 9l6 6 6-6z"/></svg>
+          <select id="hood" class="t-select-input">
+            <option value="">All neighborhoods</option>
+          </select>
+        </span>
+        <button class="t-add" id="t-add" type="button">+ Add</button>
+        <button class="t-clear" id="t-clear" type="button" aria-label="Clear all filters">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          Clear
+        </button>
+      </div>
+    </div>
+
+    <div class="scroll" id="scroll">
+      <div id="cards"></div>
+    </div>
+
+    <div class="sidebar-foot">
+      <a href="#" id="tip-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l8.84 8.84 8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        Tip jar
+      </a>
+    </div>
+  </aside>
+
+  <main class="map-area">
+    <div class="map-toolbar">
+      <span class="opt on">Map</span>
+      <span class="opt">Grid</span>
+      <span class="sep-v"></span>
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2"/></svg>
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
+    </div>
+    <div id="map"></div>
+    <div id="grid-view" class="grid-view" hidden>
+      <div class="grid-head">
+        <span class="grid-filter-label">Filter</span>
+        <span class="t-select grid-sort" id="grid-sort-pill">
+          <span class="t-current" id="grid-sort-label">Best Overall</span>
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M6 9l6 6 6-6z"/></svg>
+          <select id="grid-sort" class="t-select-input">
+            <option value="overall">Best Overall</option>
+            <option value="work">Best for Work</option>
+            <option value="coffee">Best Coffee</option>
+            <option value="food">Best Food</option>
+            <option value="vibes">Best Vibes</option>
+          </select>
+        </span>
+        <span class="grid-count" id="grid-count"></span>
+      </div>
+      <div class="grid-inner" id="grid-inner"></div>
+    </div>
+  </main>
+</div>
+
+<!-- SHARE POPOVER -->
+<div class="share-pop" id="share-pop" role="menu">
+  <div class="share-pop-title">Share SF cafes</div>
+  <button class="share-opt" data-share="copy" type="button">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+    <span class="lbl">Copy link</span>
+    <span class="check">✓</span>
+  </button>
+  <button class="share-opt" data-share="messages" type="button">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 12a8 8 0 0 1-12.4 6.7L3 20l1.4-5.2A8 8 0 1 1 21 12z"/></svg>
+    <span class="lbl">Messages</span>
+  </button>
+  <button class="share-opt" data-share="email" type="button">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+    <span class="lbl">Email</span>
+  </button>
+  <button class="share-opt" data-share="whatsapp" type="button">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.14 6.44 2.13 11.9c0 1.75.46 3.45 1.32 4.95L2 22l5.27-1.38a9.9 9.9 0 0 0 4.76 1.21h.01c5.46 0 9.9-4.44 9.91-9.9C22 8.4 20.49 5.32 18.16 3.04A9.85 9.85 0 0 0 12.04 2zm0 1.66a8.25 8.25 0 0 1 8.24 8.24c0 4.55-3.7 8.24-8.25 8.24a8.2 8.2 0 0 1-4.2-1.15l-.3-.18-3.13.82.84-3.05-.2-.31a8.21 8.21 0 0 1-1.26-4.37 8.25 8.25 0 0 1 8.26-8.24z"/><path d="M9.55 7.45c-.22-.49-.45-.5-.66-.51l-.56-.01c-.2 0-.51.07-.78.36s-1.03 1.01-1.03 2.46c0 1.45 1.06 2.85 1.21 3.05.15.2 2.06 3.3 5.1 4.49 2.52.99 3.03.8 3.58.74.55-.05 1.78-.73 2.03-1.43.25-.7.25-1.3.18-1.42-.07-.13-.27-.2-.56-.34-.29-.15-1.78-.88-2.06-.98-.27-.1-.47-.15-.67.15-.2.29-.78.98-.95 1.18-.17.2-.35.22-.65.07-.29-.15-1.25-.46-2.39-1.47a8.97 8.97 0 0 1-1.66-2.06c-.17-.29-.02-.45.13-.6.13-.13.29-.34.44-.51.15-.17.2-.29.29-.49.1-.2.05-.37-.02-.52-.07-.15-.65-1.65-.92-2.25z"/></svg>
+    <span class="lbl">WhatsApp</span>
+  </button>
+  <button class="share-opt" data-share="twitter" type="button">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2H21l-6.522 7.45L22 22h-6.797l-5.328-6.972L3.8 22H1.04l7.014-8.013L1.5 2h6.97l4.818 6.37L18.244 2zm-2.382 18h1.71L8.27 4H6.43l9.432 16z"/></svg>
+    <span class="lbl">Twitter / X</span>
+  </button>
+  <button class="share-opt" data-share="facebook" type="button">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06c0 5.02 3.66 9.18 8.44 9.94v-7.03H7.9v-2.9h2.54V9.85c0-2.52 1.49-3.91 3.78-3.91 1.09 0 2.24.2 2.24.2v2.47h-1.26c-1.24 0-1.63.78-1.63 1.57v1.88h2.78l-.45 2.9h-2.33V22c4.78-.76 8.44-4.92 8.44-9.94z"/></svg>
+    <span class="lbl">Facebook</span>
+  </button>
+  <button class="share-opt" data-share="linkedin" type="button">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14zM8.34 18V10H5.67v8h2.67zM7 8.86a1.55 1.55 0 1 0 0-3.1 1.55 1.55 0 0 0 0 3.1zM18.34 18v-4.38c0-2.49-1.33-3.64-3.1-3.64-1.43 0-2.07.79-2.42 1.34V10h-2.67v8h2.67v-4.47c0-.45.03-.9.16-1.22.36-.9 1.18-1.22 2.07-1.22 1.18 0 1.66.9 1.66 2.21V18h2.67z"/></svg>
+    <span class="lbl">LinkedIn</span>
+  </button>
+  <div class="share-pop-note">AirDrop, Notes &amp; Reminders only available via the native sheet on Safari/iOS.</div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <article class="modal" id="modal"></article>
+</div>
+
+<!-- COFFEE MODAL -->
+<div class="modal-overlay sm" id="coffee-overlay">
+  <article class="modal sm">
+    <button class="modal-close" data-close-aux aria-label="Close">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <h2>Tip Jar</h2>
+    <p class="sub">Your support helps us find, map, and share the best spots around SF, from laptop havens to first-date gems.</p>
+    <div class="tip-card" style="margin-top:20px;">
+      <div class="icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 8h14v6a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8zM17 10h2a2 2 0 0 1 0 4h-2"/><path d="M7 3v2M11 3v2"/></svg>
+      </div>
+      <div class="title">1 Drank</div>
+      <div class="price">$5</div>
+    </div>
+    <hr/>
+    <div class="custom-label">Or Drop Your Own Amount &lt;3</div>
+    <div class="custom-tip">
+      <div class="custom-tip-input">
+        <span class="currency">$</span>
+        <input type="number" id="tip-amount" value="15" min="1" />
+      </div>
+      <button class="tip-btn" id="tip-go">Tip</button>
+    </div>
+    <div class="tip-thanks" id="tip-thanks"></div>
+  </article>
+</div>
+
+<!-- NOMINATE MODAL -->
+<div class="modal-overlay sm" id="nominate-overlay">
+  <article class="modal sm">
+    <button class="modal-close" data-close-aux aria-label="Close">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <h2>Add a cafe</h2>
+    <hr/>
+    <div class="signin-card">
+      <div class="signin-title">Sign in to nominate a cafe</div>
+      <div class="signin-sub">Create an account or sign in to submit nominations.</div>
+      <button class="signin-btn" id="signin-go">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
+        Sign In / Sign Up
+      </button>
+    </div>
+  </article>
+</div>
+
+<script>
+const CAFES = [
+  { id: "sightglass-soma", name: "Sightglass Coffee", hood: "SoMa", address: "270 7th St", lat: 37.7777, lng: -122.4093, blurb: "Cathedral-ceilinged roastery with communal tables and serious coffee.", wifi: 4, outlet: 2, quiet: 2, seats: 4, laptopok: true, open_late: false, hours: "7a–6p", tags: ["Roastery","Industrial"], site: "https://sightglasscoffee.com" },
+  { id: "ritual-valencia", name: "Ritual Coffee Roasters", hood: "Mission", address: "1026 Valencia St", lat: 37.7568, lng: -122.4216, blurb: "The OG third-wave spot.", wifi: 4, outlet: 2, quiet: 2, seats: 2, laptopok: true, open_late: false, hours: "7a–7p", tags: ["Roastery"], site: "https://ritualcoffee.com" },
+  { id: "four-barrel", name: "Four Barrel Coffee", hood: "Mission", address: "375 Valencia St", lat: 37.7672, lng: -122.4216, blurb: "Famously no WiFi, no laptops in the main room.", wifi: 1, outlet: 1, quiet: 3, seats: 3, laptopok: false, open_late: false, hours: "7a–5p", tags: ["No WiFi"], site: "https://fourbarrelcoffee.com" },
+  { id: "philz-24th", name: "Philz Coffee", hood: "Mission", address: "3101 24th St", lat: 37.7521, lng: -122.4111, blurb: "Original Philz. Iconic blends.", wifi: 4, outlet: 3, quiet: 3, seats: 4, laptopok: true, open_late: true, hours: "6a–8p", tags: ["Drip","All-day"], site: "https://philzcoffee.com" },
+  { id: "blue-bottle-linden", name: "Blue Bottle Coffee", hood: "Hayes Valley", address: "315 Linden St", lat: 37.7762, lng: -122.4244, blurb: "Original kiosk in the alley.", wifi: 1, outlet: 1, quiet: 3, seats: 1, laptopok: false, open_late: false, hours: "7a–6p", tags: ["Kiosk"], site: "https://bluebottlecoffee.com" },
+  { id: "saint-frank-polk", name: "Saint Frank Coffee", hood: "Russian Hill", address: "2340 Polk St", lat: 37.7942, lng: -122.4221, blurb: "Bright, minimal, single-origin nerd haven.", wifi: 4, outlet: 2, quiet: 3, seats: 2, laptopok: true, open_late: false, hours: "6:30a–6p", tags: ["Single-origin"], site: "https://saintfrankcoffee.com" },
+  { id: "reveille-polk", name: "Réveille Coffee Co.", hood: "Russian Hill", address: "1998 Polk St", lat: 37.7949, lng: -122.4216, blurb: "Bright Polk Street outpost with high lofted ceilings, indoor + heated parklet seating, and a bustling weekend brunch.", wifi: 4, outlet: 3, quiet: 3, seats: 4, laptopok: true, open_late: false, hours: "6:30a–6p", tags: ["Sidewalk","Parklet","Bright"], site: "https://reveillecoffee.com" },
+  { id: "the-mill", name: "The Mill", hood: "NoPa", address: "736 Divisadero St", lat: 37.7768, lng: -122.4378, blurb: "Toast + Four Barrel + a wall of light.", wifi: 4, outlet: 4, quiet: 2, seats: 4, laptopok: true, open_late: false, hours: "7a–6p", tags: ["Bakery","Bright"], site: "https://themillsf.com" },
+  { id: "andytown-lawton", name: "Andytown Coffee Roasters", hood: "Outer Sunset", address: "3655 Lawton St", lat: 37.7548, lng: -122.5040, blurb: "Snowy Plover central. Quiet by SF standards.", wifi: 4, outlet: 3, quiet: 4, seats: 4, laptopok: true, open_late: false, hours: "6:30a–6p", tags: ["Quiet","Snowy Plover"], site: "https://andytownsf.com" },
+  { id: "wrecking-ball-union", name: "Wrecking Ball Coffee", hood: "Cow Hollow", address: "2271 Union St", lat: 37.7980, lng: -122.4361, blurb: "Small, design-y, friendly.", wifi: 3, outlet: 2, quiet: 3, seats: 2, laptopok: true, open_late: false, hours: "6:30a–6p", tags: ["Roastery"], site: "https://wreckingballcoffee.com" },
+  { id: "reveille-castro", name: "Réveille Coffee Co.", hood: "Castro", address: "4076 18th St", lat: 37.7610, lng: -122.4350, blurb: "Sunny corner with sidewalk seating.", wifi: 4, outlet: 2, quiet: 3, seats: 3, laptopok: true, open_late: false, hours: "6a–6p", tags: ["Sidewalk"], site: "https://reveillecoffee.com" },
+  { id: "mazarine-market", name: "Mazarine Coffee", hood: "FiDi", address: "720 Market St", lat: 37.7894, lng: -122.4039, blurb: "Possibly the most laptop-friendly cafe downtown.", wifi: 5, outlet: 4, quiet: 3, seats: 4, laptopok: true, open_late: false, hours: "6:30a–5p", tags: ["Laptops welcome","Communal"], site: "https://mazarinecoffee.com" },
+  { id: "caffe-trieste", name: "Caffe Trieste", hood: "North Beach", address: "601 Vallejo St", lat: 37.7984, lng: -122.4080, blurb: "Old-school SF institution since 1956.", wifi: 2, outlet: 2, quiet: 2, seats: 3, laptopok: true, open_late: false, hours: "6:30a–9p", tags: ["Historic"], site: "https://caffetrieste.com" },
+  { id: "linea-caffe", name: "Linea Caffe", hood: "Mission", address: "3417 18th St", lat: 37.7615, lng: -122.4221, blurb: "Postage-stamp espresso bar.", wifi: 2, outlet: 1, quiet: 2, seats: 1, laptopok: false, open_late: false, hours: "7a–4p", tags: ["Tiny"], site: "https://lineacaffe.com" },
+  { id: "stable-cafe", name: "Stable Cafe", hood: "Mission", address: "2128 Folsom St", lat: 37.7657, lng: -122.4153, blurb: "Hidden gem with a sunny backyard patio.", wifi: 4, outlet: 3, quiet: 4, seats: 4, laptopok: true, open_late: false, hours: "7a–4p", tags: ["Patio","Quiet"], site: "https://stablecafe.com" },
+  { id: "farleys-potrero", name: "Farley's", hood: "Potrero Hill", address: "1315 18th St", lat: 37.7616, lng: -122.4007, blurb: "Neighborhood living-room energy.", wifi: 4, outlet: 3, quiet: 4, seats: 4, laptopok: true, open_late: true, hours: "6:30a–8p", tags: ["Cozy","Open late"], site: "https://farleyscoffee.com" },
+  { id: "coffee-movement", name: "The Coffee Movement", hood: "Nob Hill", address: "1030 Hyde St", lat: 37.7920, lng: -122.4170, blurb: "Award-winning micro-roastery.", wifi: 3, outlet: 1, quiet: 2, seats: 1, laptopok: false, open_late: false, hours: "7a–4p", tags: ["Micro-roastery"], site: "https://thecoffeemovement.com" },
+  { id: "equator-proper", name: "Equator Coffees", hood: "Mid-Market", address: "1100 Market St", lat: 37.7793, lng: -122.4144, blurb: "Inside the Proper Hotel — design-magazine interior.", wifi: 4, outlet: 3, quiet: 3, seats: 4, laptopok: true, open_late: false, hours: "7a–5p", tags: ["Hotel lobby"], site: "https://equatorcoffees.com" },
+  { id: "jane-fillmore", name: "Jane on Fillmore", hood: "Lower Pac Heights", address: "2123 Fillmore St", lat: 37.7872, lng: -122.4344, blurb: "Bakery + coffee bar that draws a crowd.", wifi: 3, outlet: 2, quiet: 2, seats: 3, laptopok: true, open_late: false, hours: "7a–6p", tags: ["Bakery"], site: "https://itsjane.com" },
+  { id: "reveille-columbus", name: "Réveille Coffee Co.", hood: "North Beach", address: "200 Columbus Ave", lat: 37.7976, lng: -122.4051, blurb: "Bright triangular corner shop.", wifi: 4, outlet: 2, quiet: 3, seats: 3, laptopok: true, open_late: false, hours: "6a–5p", tags: ["Bright"], site: "https://reveillecoffee.com" },
+  { id: "sextant-folsom", name: "Sextant Coffee Roasters", hood: "SoMa", address: "1415 Folsom St", lat: 37.7720, lng: -122.4111, blurb: "Ethiopian-focused roaster with a quiet, airy room.", wifi: 4, outlet: 3, quiet: 4, seats: 4, laptopok: true, open_late: false, hours: "7a–4p", tags: ["Ethiopian","Quiet"], site: "https://sextantcoffee.com" },
+  { id: "snowbird-inner-sunset", name: "Snowbird Coffee", hood: "Inner Sunset", address: "1352 9th Ave", lat: 37.7635, lng: -122.4661, blurb: "Cozy, plant-filled neighborhood spot near the park.", wifi: 4, outlet: 3, quiet: 4, seats: 3, laptopok: true, open_late: false, hours: "7a–6p", tags: ["Cozy"], site: "https://www.snowbird.coffee" },
+  { id: "coffee-cultures-embarcadero", name: "Coffee Cultures", hood: "Embarcadero", address: "201 Spear St", lat: 37.7916, lng: -122.3946, blurb: "Downtown weekday workhorse.", wifi: 5, outlet: 4, quiet: 3, seats: 4, laptopok: true, open_late: false, hours: "6:30a–5p", tags: ["Downtown"], site: "https://coffeecultures.com" },
+  { id: "le-marais-chestnut", name: "Le Marais Bakery", hood: "Marina", address: "2066 Chestnut St", lat: 37.8004, lng: -122.4378, blurb: "Parisian-style bakery with serious coffee.", wifi: 4, outlet: 2, quiet: 3, seats: 3, laptopok: true, open_late: false, hours: "7a–4p", tags: ["Bakery"], site: "https://lemaraisbakery.com" },
+  { id: "the-grove-marina", name: "The Grove", hood: "Marina", address: "2250 Chestnut St", lat: 37.8005, lng: -122.4406, blurb: "Cabin-meets-living-room with mismatched couches.", wifi: 4, outlet: 3, quiet: 2, seats: 5, laptopok: true, open_late: true, hours: "7a–9p", tags: ["All-day","Couches"], site: "https://thegrovesf.com" },
+  { id: "tartine-manufactory", name: "Tartine Manufactory", hood: "Mission", address: "595 Alabama St", lat: 37.7611, lng: -122.4119, blurb: "Cavernous bakery-restaurant with a separate coffee bar.", wifi: 4, outlet: 3, quiet: 2, seats: 5, laptopok: true, open_late: false, hours: "8a–5p", tags: ["Bakery","Big space"], site: "https://tartinebakery.com" },
+  { id: "trouble-coffee-judah", name: "Trouble Coffee", hood: "Outer Sunset", address: "4033 Judah St", lat: 37.7610, lng: -122.5070, blurb: "Famous for cinnamon toast and a no-laptops policy.", wifi: 1, outlet: 1, quiet: 3, seats: 2, laptopok: false, open_late: false, hours: "7a–7p", tags: ["No laptops"], site: "https://troublecoffee.com" },
+  { id: "stanza-coffee", name: "Stanza Coffee", hood: "Mission", address: "3126 16th St", lat: 37.7649, lng: -122.4254, blurb: "Calm, design-forward Mission alternative.", wifi: 4, outlet: 3, quiet: 4, seats: 3, laptopok: true, open_late: false, hours: "7a–5p", tags: ["Quiet"], site: "https://stanzacoffee.com" },
+  { id: "blue-bottle-ferry", name: "Blue Bottle — Ferry Building", hood: "Embarcadero", address: "1 Ferry Building #7", lat: 37.7955, lng: -122.3933, blurb: "Pristine espresso with a view of the Bay Bridge.", wifi: 2, outlet: 1, quiet: 2, seats: 1, laptopok: false, open_late: false, hours: "7a–6p", tags: ["Stand-up bar"], site: "https://bluebottlecoffee.com" },
+  { id: "home-coffee-larkin", name: "Home Coffee Roasters", hood: "Lower Nob Hill", address: "1003 Larkin St", lat: 37.7878, lng: -122.4180, blurb: "Tiny, friendly roastery on the Tendernob border.", wifi: 3, outlet: 2, quiet: 3, seats: 2, laptopok: true, open_late: false, hours: "7a–4p", tags: ["Roastery","Tiny"], site: "https://homecoffeeroasters.com" },
+  { id: "arsicault-arguello", name: "Arsicault Bakery", hood: "Inner Richmond", address: "397 Arguello Blvd", lat: 37.7813, lng: -122.4585, blurb: "Some of the best croissants in America.", wifi: 1, outlet: 1, quiet: 3, seats: 1, laptopok: false, open_late: false, hours: "7a–3p", tags: ["Bakery","Croissants"], site: "https://arsicaultbakery.com" },
+  { id: "tadaima-marina", name: "Tadaima — Marina", hood: "Marina", address: "1849 Union St", lat: 37.7976, lng: -122.4321, blurb: "Original Tadaima — matcha-focused Japanese cafe with mochi, wagashi, and a calm minimalist room.", wifi: 3, outlet: 2, quiet: 4, seats: 2, laptopok: false, open_late: false, hours: "11a–5:30p", tags: ["Matcha","Japanese","Pastries"], site: "https://tadaimasf.com" },
+  { id: "tadaima-mission", name: "Tadaima — Mission", hood: "Mission", address: "3515 20th St", lat: 37.7587, lng: -122.4234, blurb: "Mission outpost of Tadaima — same matcha-and-wagashi formula, slightly bigger room, popular afternoons.", wifi: 3, outlet: 2, quiet: 3, seats: 3, laptopok: true, open_late: false, hours: "11a–5:30p", tags: ["Matcha","Japanese","Pastries"], site: "https://tadaimasf.com" },
+  { id: "tadaima-inner-sunset", name: "Tadaima — Inner Sunset", hood: "Inner Sunset", address: "1248 9th Ave", lat: 37.7644, lng: -122.4664, blurb: "Newest Tadaima (Feb 2026) by the park — matcha lattes, mochi, and a serene corner setting.", wifi: 3, outlet: 2, quiet: 4, seats: 3, laptopok: true, open_late: false, hours: "11a–5:30p", tags: ["Matcha","Japanese","Pastries"], site: "https://tadaimasf.com" },
+  { id: "kissaten-jp", name: "Kissaten", hood: "Japantown", address: "1730 Buchanan St", lat: 37.7861, lng: -122.4296, blurb: "Traditional Japanese tea house pace — matcha, hojicha, and minimal sweets in a meditative room. Read a book, slow down.", wifi: 3, outlet: 2, quiet: 5, seats: 3, laptopok: true, open_late: false, hours: "9a–6p", tags: ["Matcha","Japanese","Tea house"], site: "" },
+  { id: "stonemill-matcha", name: "Stonemill Matcha", hood: "Mission", address: "561 Valencia St", lat: 37.7616, lng: -122.4216, blurb: "All-matcha all-the-time — ceremonial-grade lattes, matcha soft serve, savory bowls, and a stark minimalist room.", wifi: 4, outlet: 2, quiet: 3, seats: 3, laptopok: true, open_late: false, hours: "8a–6p", tags: ["Matcha","Minimal","Soft serve"], site: "https://stonemillmatcha.com" },
+  { id: "samovar-mission", name: "Samovar Tea Lounge", hood: "Mission", address: "411 Valencia St", lat: 37.7670, lng: -122.4220, blurb: "Tea-house calm on Valencia. Strong matcha program, deep tea menu, real food. Built for long, contemplative afternoons.", wifi: 4, outlet: 3, quiet: 4, seats: 4, laptopok: true, open_late: false, hours: "8a–7p", tags: ["Matcha","Tea","Full food"], site: "https://samovartea.com" },
+  { id: "cha-ya", name: "Cha-Ya", hood: "Mission", address: "762 Valencia St", lat: 37.7621, lng: -122.4220, blurb: "Vegetarian Japanese kitchen with one of the quieter matcha programs and beautifully composed plates.", wifi: 2, outlet: 1, quiet: 4, seats: 4, laptopok: false, open_late: true, hours: "11a–9p", tags: ["Matcha","Japanese","Vegetarian"], site: "" },
+  { id: "ritual-hayes", name: "Ritual Coffee Roasters", hood: "Hayes Valley", address: "432B Octavia St", lat: 37.7765, lng: -122.4239, blurb: "Hayes Valley outpost of the OG third-wave roaster — sleek, sunny, espresso-forward, gets busy.", wifi: 4, outlet: 2, quiet: 2, seats: 2, laptopok: true, open_late: false, hours: "7a–6p", tags: ["Roastery","Third-wave"], site: "https://ritualcoffee.com" },
+  { id: "la-boulangerie-hayes", name: "La Boulangerie de SF", hood: "Hayes Valley", address: "500 Hayes St", lat: 37.7765, lng: -122.4257, blurb: "French bakery with strong coffee, croissants, and quiches. Sunny corner, decent for a morning shift.", wifi: 3, outlet: 2, quiet: 2, seats: 3, laptopok: true, open_late: false, hours: "7a–6p", tags: ["Bakery","French"], site: "https://laboulangeriesf.com" },
+  { id: "mercury-cafe", name: "Mercury Cafe", hood: "Hayes Valley", address: "201 Octavia Blvd", lat: 37.7727, lng: -122.4239, blurb: "Neighborhood favorite with good coffee, decent food, and Friday night live jazz. Cozy and old-school.", wifi: 4, outlet: 3, quiet: 3, seats: 4, laptopok: true, open_late: true, hours: "7a–10p", tags: ["Live jazz","Neighborhood"], site: "" },
+  { id: "reveille-marina", name: "Réveille Coffee Co.", hood: "Marina", address: "2268 Chestnut St", lat: 37.8006, lng: -122.4392, blurb: "Marina outpost of Réveille — bright corner, weekend brunch crowd, dependable mornings.", wifi: 4, outlet: 2, quiet: 2, seats: 3, laptopok: true, open_late: false, hours: "6:30a–6p", tags: ["Brunch","Bright"], site: "https://reveillecoffee.com" },
+  { id: "bluestone-lane", name: "Bluestone Lane", hood: "Marina", address: "3352 Steiner St", lat: 37.8023, lng: -122.4368, blurb: "Aussie-style coffee shop chain. Flat whites, avocado toast, surprisingly laptop-friendly side room.", wifi: 4, outlet: 3, quiet: 3, seats: 4, laptopok: true, open_late: false, hours: "7a–4p", tags: ["Australian","Flat whites"], site: "https://bluestonelane.com" },
+  { id: "kopiku", name: "Kopiku Coffee", hood: "Marina", address: "1955 Chestnut St", lat: 37.8005, lng: -122.4358, blurb: "Tiny Marina spot serving Indonesian coffee and pandan drinks. Limited seating, lovely on a sunny day.", wifi: 2, outlet: 1, quiet: 3, seats: 2, laptopok: false, open_late: false, hours: "8a–4p", tags: ["Indonesian","Pandan"], site: "" },
+  { id: "motoring-coffee", name: "Motoring Coffee", hood: "Cow Hollow", address: "2031 Union St", lat: 37.7973, lng: -122.4321, blurb: "Car-culture meets high-end caffeine — part vintage car social club, part top-tier cafe. Unexpectedly great.", wifi: 3, outlet: 2, quiet: 2, seats: 3, laptopok: false, open_late: false, hours: "7a–5p", tags: ["Vintage cars","Niche"], site: "" },
+  { id: "telve-union", name: "Telve", hood: "Cow Hollow", address: "1981 Union St", lat: 37.7972, lng: -122.4316, blurb: "Turkish coffee, baklava, and Turkish delight on Union St. A different rhythm than the third-wave grid.", wifi: 3, outlet: 2, quiet: 4, seats: 3, laptopok: true, open_late: false, hours: "8a–7p", tags: ["Turkish","Sweets"], site: "" },
+  { id: "philz-russian-hill", name: "Philz Coffee", hood: "Russian Hill", address: "748 Van Ness Ave", lat: 37.7857, lng: -122.4214, blurb: "Russian Hill Philz with communal tables, plenty of outlets, and the iconic Mint Mojito. A reliable all-day pick.", wifi: 4, outlet: 4, quiet: 3, seats: 4, laptopok: true, open_late: true, hours: "6a–8p", tags: ["Drip","All-day","Outlets"], site: "https://philzcoffee.com" },
+  { id: "atlas-cafe", name: "Atlas Cafe", hood: "Mission", address: "3049 20th St", lat: 37.7588, lng: -122.4096, blurb: "Mission neighborhood institution with garden seating, bagel breakfasts, and a chill long-session vibe.", wifi: 4, outlet: 3, quiet: 4, seats: 4, laptopok: true, open_late: false, hours: "6:30a–5p", tags: ["Garden","Bagels","Neighborhood"], site: "https://atlascafe.net" },
+  { id: "maxfields", name: "Maxfield's House of Caffeine", hood: "Mission", address: "398 Dolores St", lat: 37.7641, lng: -122.4275, blurb: "Dolores Park-adjacent corner cafe with strong neighborhood energy. Tables turn over quickly.", wifi: 3, outlet: 2, quiet: 3, seats: 3, laptopok: true, open_late: false, hours: "6:30a–6p", tags: ["Corner cafe","Dolores adjacent"], site: "" },
+  { id: "tartine-bakery", name: "Tartine Bakery", hood: "Mission", address: "600 Guerrero St", lat: 37.7613, lng: -122.4244, blurb: "The original Tartine — bread, pastries, espresso. Always a line; come early. Not really a sit-and-work spot.", wifi: 2, outlet: 1, quiet: 2, seats: 2, laptopok: false, open_late: false, hours: "8a–5p", tags: ["Bakery","Iconic","Line"], site: "https://tartinebakery.com" },
+  { id: "cafe-de-olla", name: "Cafe de Olla", hood: "Mission", address: "3024 16th St", lat: 37.7649, lng: -122.4198, blurb: "Mexican-style cafe with cafe de olla (cinnamon-spiced coffee) and Mexican hot chocolate. Casual vibes.", wifi: 3, outlet: 2, quiet: 3, seats: 3, laptopok: true, open_late: false, hours: "7a–4p", tags: ["Mexican","Cinnamon coffee"], site: "" },
+  { id: "bird-and-bear", name: "Bird and Bear Coffee", hood: "Cole Valley", address: "726 Cole St", lat: 37.7651, lng: -122.4506, blurb: "Family-owned fresh-roaster on a quiet Cole Valley corner. Small space, big focus on the cup.", wifi: 3, outlet: 2, quiet: 4, seats: 2, laptopok: true, open_late: false, hours: "10a–6p", tags: ["Roastery","Family-owned"], site: "https://birdandbearcoffee.com" },
+  { id: "third-wheel-coffee", name: "Third Wheel Coffee", hood: "Hayes Valley", address: "535 Scott St", lat: 37.7740, lng: -122.4366, blurb: "Cart-style coffee stand tucked inside Lucinda's Deli near Alamo Square — friendly service, ceramic mugs.", wifi: 2, outlet: 1, quiet: 4, seats: 2, laptopok: false, open_late: false, hours: "7a–3p", tags: ["Coffee cart","Alamo Square"], site: "https://www.thirdwheel.coffee" },
+  { id: "coffee-bodega", name: "Coffee Bodega", hood: "Cow Hollow", address: "2201 Union St", lat: 37.7974, lng: -122.4361, blurb: "Farm-to-table specialty coffees on Union St. Small but well-curated, with a calm regulars-and-laptops vibe.", wifi: 4, outlet: 3, quiet: 3, seats: 3, laptopok: true, open_late: false, hours: "7a–5p", tags: ["Farm-to-table","Specialty"], site: "https://coffeebodega.com" },
+  { id: "fiddle-fig", name: "Fiddle Fig Cafe & Coffee", hood: "Russian Hill", address: "790 Lombard St", lat: 37.8019, lng: -122.4128, blurb: "Sunny corner cafe at Taylor & Lombard with coffee, fruit shakes, sandwiches, and a roomy lay-out.", wifi: 4, outlet: 3, quiet: 3, seats: 4, laptopok: true, open_late: false, hours: "7a–5p", tags: ["Sunny","Sandwiches"], site: "https://www.fiddlefigcoffee.com" },
+  { id: "out-there-coffee", name: "Out There Coffee Roasters", hood: "Lower Haight", address: "254 Fillmore St", lat: 37.7716, lng: -122.4307, blurb: "Small Lower Haight roaster with a serious bean program and a tight, design-y storefront.", wifi: 3, outlet: 2, quiet: 3, seats: 2, laptopok: true, open_late: false, hours: "7a–4p", tags: ["Roastery","Small"], site: "https://coffeeoutthere.com" },
+  { id: "kope-house", name: "Kopê House", hood: "Hayes Valley", address: "546 Laguna St", lat: 37.7755, lng: -122.4263, blurb: "Newer Hayes Valley arrival on Laguna — modern Asian-inflected coffee bar with plans for late-night service.", wifi: 4, outlet: 2, quiet: 3, seats: 3, laptopok: true, open_late: true, hours: "8a–9p", tags: ["Modern","Late-night"], site: "https://www.kopehouse.com" },
+  { id: "chemine", name: "Cheminé", hood: "Cow Hollow", address: "3030 Fillmore St", lat: 37.7976, lng: -122.4365, blurb: "Mediterranean bakery-cafe on Fillmore — baklava cheesecake, borek, light salads. Family-run, friendly.", wifi: 3, outlet: 2, quiet: 3, seats: 3, laptopok: true, open_late: false, hours: "8a–5p", tags: ["Mediterranean","Bakery"], site: "" },
+  { id: "interval-long-now", name: "The Interval at Long Now", hood: "Marina", address: "2 Marina Blvd, Fort Mason Bldg A", lat: 37.8059, lng: -122.4313, blurb: "Bar-cafe at Fort Mason inside the Long Now Foundation — books, single-origin coffee, cocktails. Truly singular.", wifi: 4, outlet: 3, quiet: 4, seats: 4, laptopok: true, open_late: true, hours: "10a–12a", tags: ["Bar","Books","Long Now"], site: "https://longnow.org/interval/" },
+  { id: "joe-juice-mission-bay", name: "Joe & The Juice — Mission Bay", hood: "Mission Bay", address: "1155 4th St", lat: 37.7708, lng: -122.3917, blurb: "Danish juice-and-coffee chain with high-energy tunes and tunacado sandwiches. Standing-room counter culture.", wifi: 4, outlet: 2, quiet: 2, seats: 2, laptopok: false, open_late: false, hours: "7a–7p", tags: ["Juice","Sandwiches","Chain"], site: "https://joejuice.com" },
+  { id: "joe-juice-market", name: "Joe & The Juice — Market", hood: "FiDi", address: "525 Market St", lat: 37.7895, lng: -122.4007, blurb: "Downtown commuter Joe & The Juice — fast, loud, perfect for a grab-and-go matcha or smoothie.", wifi: 3, outlet: 1, quiet: 1, seats: 2, laptopok: false, open_late: false, hours: "6:30a–7p", tags: ["Juice","Sandwiches","Chain"], site: "https://joejuice.com" },
+  { id: "joe-juice-howard", name: "Joe & The Juice — Howard", hood: "SoMa", address: "301 Howard St", lat: 37.7891, lng: -122.3957, blurb: "SoMa workhorse Joe & The Juice — same playbook, more techies. Caffeine and smoothies on rotation.", wifi: 3, outlet: 1, quiet: 1, seats: 2, laptopok: false, open_late: false, hours: "6:30a–7p", tags: ["Juice","Sandwiches","Chain"], site: "https://joejuice.com" },
+  { id: "joe-juice-california", name: "Joe & The Juice — California", hood: "FiDi", address: "50 California St", lat: 37.7929, lng: -122.3973, blurb: "Financial District lunch-rush Joe & The Juice — packed at noon, quiet by 3.", wifi: 3, outlet: 1, quiet: 1, seats: 2, laptopok: false, open_late: false, hours: "6:30a–6p", tags: ["Juice","Sandwiches","Chain"], site: "https://joejuice.com" },
+  { id: "joe-juice-fillmore", name: "Joe & The Juice — Fillmore", hood: "Lower Pac Heights", address: "2213 Fillmore St", lat: 37.7878, lng: -122.4344, blurb: "Fillmore Joe & The Juice — Saturday brunch overflow, athleisure crowd, reliable matcha.", wifi: 3, outlet: 1, quiet: 2, seats: 2, laptopok: false, open_late: false, hours: "7a–7p", tags: ["Juice","Sandwiches","Chain"], site: "https://joejuice.com" },
+  { id: "joe-juice-montgomery", name: "Joe & The Juice — Montgomery", hood: "FiDi", address: "235 Montgomery St", lat: 37.7912, lng: -122.4023, blurb: "FiDi tower Joe & The Juice — the busiest of the bunch. In and out fast.", wifi: 3, outlet: 1, quiet: 1, seats: 2, laptopok: false, open_late: false, hours: "6:30a–7p", tags: ["Juice","Sandwiches","Chain"], site: "https://joejuice.com" }
+];
+
+// ---- Category ratings & business type ----
+// food, coffee, vibes are 1-5. vibe_type: "quiet" or "lively". chain: large multi-state chain.
+// chain: true => mainstream / multi-location brand (excluded by the Indie filter).
+// "Indie" here means single-location or genuinely small operation.
+const EXTRA = {
+  "sightglass-soma":             { food: 3, coffee: 5, vibes: 4, vibe_type: "lively", chain: true  },
+  "ritual-valencia":             { food: 2, coffee: 5, vibes: 4, vibe_type: "lively", chain: true  },
+  "four-barrel":                 { food: 2, coffee: 5, vibes: 4, vibe_type: "lively", chain: true  },
+  "philz-24th":                  { food: 3, coffee: 4, vibes: 3, vibe_type: "lively", chain: true  },
+  "blue-bottle-linden":          { food: 3, coffee: 5, vibes: 4, vibe_type: "lively", chain: true  },
+  "saint-frank-polk":            { food: 3, coffee: 5, vibes: 4, vibe_type: "quiet",  chain: true  },
+  "reveille-polk":               { food: 3, coffee: 4, vibes: 4, vibe_type: "lively", chain: true  },
+  "the-mill":                    { food: 5, coffee: 4, vibes: 4, vibe_type: "lively", chain: false },
+  "andytown-lawton":             { food: 3, coffee: 5, vibes: 4, vibe_type: "quiet",  chain: true  },
+  "wrecking-ball-union":         { food: 2, coffee: 5, vibes: 4, vibe_type: "lively", chain: true  },
+  "reveille-castro":             { food: 3, coffee: 4, vibes: 4, vibe_type: "lively", chain: true  },
+  "mazarine-market":             { food: 3, coffee: 4, vibes: 3, vibe_type: "lively", chain: false },
+  "caffe-trieste":               { food: 3, coffee: 4, vibes: 5, vibe_type: "lively", chain: false },
+  "linea-caffe":                 { food: 2, coffee: 5, vibes: 4, vibe_type: "lively", chain: false },
+  "stable-cafe":                 { food: 4, coffee: 4, vibes: 5, vibe_type: "quiet",  chain: false },
+  "farleys-potrero":             { food: 3, coffee: 3, vibes: 5, vibe_type: "quiet",  chain: false },
+  "coffee-movement":             { food: 2, coffee: 5, vibes: 4, vibe_type: "lively", chain: false },
+  "equator-proper":              { food: 3, coffee: 4, vibes: 4, vibe_type: "lively", chain: true  },
+  "jane-fillmore":               { food: 5, coffee: 4, vibes: 4, vibe_type: "lively", chain: true  },
+  "reveille-columbus":           { food: 3, coffee: 4, vibes: 4, vibe_type: "lively", chain: true  },
+  "sextant-folsom":              { food: 2, coffee: 5, vibes: 4, vibe_type: "quiet",  chain: false },
+  "snowbird-inner-sunset":       { food: 3, coffee: 4, vibes: 5, vibe_type: "quiet",  chain: false },
+  "coffee-cultures-embarcadero": { food: 3, coffee: 3, vibes: 3, vibe_type: "lively", chain: true  },
+  "le-marais-chestnut":          { food: 5, coffee: 4, vibes: 4, vibe_type: "lively", chain: true  },
+  "the-grove-marina":            { food: 4, coffee: 3, vibes: 5, vibe_type: "lively", chain: true  },
+  "tartine-manufactory":         { food: 5, coffee: 4, vibes: 4, vibe_type: "lively", chain: true  },
+  "trouble-coffee-judah":        { food: 4, coffee: 5, vibes: 5, vibe_type: "lively", chain: false },
+  "stanza-coffee":               { food: 3, coffee: 4, vibes: 4, vibe_type: "quiet",  chain: false },
+  "blue-bottle-ferry":           { food: 3, coffee: 5, vibes: 4, vibe_type: "lively", chain: true  },
+  "home-coffee-larkin":          { food: 2, coffee: 5, vibes: 4, vibe_type: "quiet",  chain: false },
+  "arsicault-arguello":          { food: 5, coffee: 4, vibes: 4, vibe_type: "lively", chain: true  },
+  "tadaima-marina":              { food: 4, coffee: 5, vibes: 5, vibe_type: "quiet",  chain: true  },
+  "tadaima-mission":             { food: 4, coffee: 5, vibes: 4, vibe_type: "lively", chain: true  },
+  "tadaima-inner-sunset":        { food: 4, coffee: 5, vibes: 5, vibe_type: "quiet",  chain: true  },
+  "kissaten-jp":                 { food: 4, coffee: 4, vibes: 5, vibe_type: "quiet",  chain: false },
+  "stonemill-matcha":            { food: 4, coffee: 5, vibes: 4, vibe_type: "lively", chain: true  },
+  "samovar-mission":             { food: 4, coffee: 4, vibes: 5, vibe_type: "quiet",  chain: true  },
+  "cha-ya":                      { food: 5, coffee: 3, vibes: 4, vibe_type: "quiet",  chain: false },
+  "ritual-hayes":                { food: 2, coffee: 5, vibes: 4, vibe_type: "lively", chain: true  },
+  "la-boulangerie-hayes":        { food: 4, coffee: 3, vibes: 3, vibe_type: "lively", chain: true  },
+  "mercury-cafe":                { food: 3, coffee: 4, vibes: 5, vibe_type: "lively", chain: false },
+  "reveille-marina":             { food: 3, coffee: 4, vibes: 4, vibe_type: "lively", chain: true  },
+  "bluestone-lane":              { food: 4, coffee: 4, vibes: 4, vibe_type: "lively", chain: true  },
+  "kopiku":                      { food: 3, coffee: 4, vibes: 4, vibe_type: "lively", chain: false },
+  "motoring-coffee":             { food: 2, coffee: 4, vibes: 5, vibe_type: "lively", chain: false },
+  "telve-union":                 { food: 4, coffee: 4, vibes: 4, vibe_type: "quiet",  chain: false },
+  "philz-russian-hill":          { food: 3, coffee: 4, vibes: 3, vibe_type: "lively", chain: true  },
+  "atlas-cafe":                  { food: 4, coffee: 4, vibes: 5, vibe_type: "quiet",  chain: false },
+  "maxfields":                   { food: 3, coffee: 4, vibes: 4, vibe_type: "lively", chain: false },
+  "tartine-bakery":              { food: 5, coffee: 3, vibes: 4, vibe_type: "lively", chain: true  },
+  "cafe-de-olla":                { food: 3, coffee: 4, vibes: 4, vibe_type: "lively", chain: false },
+  "bird-and-bear":               { food: 2, coffee: 5, vibes: 4, vibe_type: "quiet",  chain: false },
+  "third-wheel-coffee":          { food: 2, coffee: 4, vibes: 4, vibe_type: "quiet",  chain: false },
+  "coffee-bodega":               { food: 3, coffee: 4, vibes: 4, vibe_type: "lively", chain: false },
+  "fiddle-fig":                  { food: 4, coffee: 4, vibes: 5, vibe_type: "lively", chain: false },
+  "out-there-coffee":            { food: 2, coffee: 5, vibes: 4, vibe_type: "lively", chain: false },
+  "kope-house":                  { food: 3, coffee: 4, vibes: 4, vibe_type: "lively", chain: false },
+  "chemine":                     { food: 5, coffee: 3, vibes: 4, vibe_type: "lively", chain: false },
+  "interval-long-now":           { food: 3, coffee: 4, vibes: 5, vibe_type: "quiet",  chain: false },
+  "joe-juice-mission-bay":       { food: 4, coffee: 3, vibes: 2, vibe_type: "lively", chain: true  },
+  "joe-juice-market":            { food: 4, coffee: 3, vibes: 2, vibe_type: "lively", chain: true  },
+  "joe-juice-howard":            { food: 4, coffee: 3, vibes: 2, vibe_type: "lively", chain: true  },
+  "joe-juice-california":        { food: 4, coffee: 3, vibes: 2, vibe_type: "lively", chain: true  },
+  "joe-juice-fillmore":          { food: 4, coffee: 3, vibes: 2, vibe_type: "lively", chain: true  },
+  "joe-juice-montgomery":        { food: 4, coffee: 3, vibes: 2, vibe_type: "lively", chain: true  }
+};
+
+// ---- helpers ----
+function workRating(c) {
+  // derived from wifi/outlet/quiet/seats, on a 1–5 scale
+  return Math.round(((c.wifi*1.1 + c.outlet*1.0 + c.quiet*0.9 + c.seats*0.9) / 4) * 10) / 10;
+}
+CAFES.forEach(c => {
+  Object.assign(c, EXTRA[c.id] || { food: 3, coffee: 3, vibes: 3, vibe_type: "lively", chain: false });
+  c.work = workRating(c);
+  c.overall = Math.round(((c.work + c.food + c.coffee + c.vibes) / 4) * 10) / 10;
+  c.score = c.overall; // legacy alias
+});
+CAFES.sort((a, b) => b.overall - a.overall);
+
+function categoryScore(c, cat) {
+  if (cat === 'work')   return c.work;
+  if (cat === 'food')   return c.food;
+  if (cat === 'coffee') return c.coffee;
+  if (cat === 'vibes')  return c.vibes;
+  return c.overall;
+}
+
+const HOODS = Array.from(new Set(CAFES.map(c => c.hood))).sort();
+
+function scoreTier(s) {
+  if (s >= 4) return 'good';
+  if (s >= 3.4) return 'mid-good';
+  if (s >= 2.8) return 'mid';
+  return 'bad';
+}
+function tierColor(t) {
+  return ({ good: '#5a8a3a', 'mid-good': '#a8a83a', mid: '#d97a2a', bad: '#b03b2b' })[t];
+}
+
+function parseT(s) {
+  const m = s.trim().toLowerCase().match(/^(\d{1,2})(?::(\d{2}))?([ap])$/);
+  if (!m) return null;
+  let h = +m[1];
+  const min = m[2] ? +m[2] : 0;
+  if (h === 12) h = 0;
+  if (m[3] === 'p') h += 12;
+  return h + min/60;
+}
+function isOpen(hoursStr) {
+  const m = hoursStr.match(/^(.+?)[–\-](.+)$/);
+  if (!m) return null;
+  const a = parseT(m[1]), b = parseT(m[2]);
+  if (a == null || b == null) return null;
+  const now = new Date();
+  const t = now.getHours() + now.getMinutes()/60;
+  return t >= a && t < b;
+}
+function prettyHours(s) {
+  return s
+    .replace(/(\d+(?::\d+)?)a/g, (_, t) => t + ' AM')
+    .replace(/(\d+(?::\d+)?)p/g, (_, t) => t + ' PM')
+    .replace(/[–\-]/g, '–');
+}
+function initial(name) {
+  const w = name.replace(/^The\s+/i, '').split(/\s+/);
+  return (w[0][0] || '?').toUpperCase();
+}
+function avatarColor(name) {
+  const palette = ['#6b4a7a', '#3b5d7a', '#7a3b1f', '#4a7a3b', '#c47a3a', '#b14a1a', '#5e5444', '#8a3b6b', '#3b7a6b'];
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = ((h << 5) - h) + name.charCodeAt(i) | 0;
+  return palette[Math.abs(h) % palette.length];
+}
+
+// Logo: try to pull the cafe's favicon; fall back to letter avatar.
+// Uses Google's s2/favicons service. If the returned image is too small
+// (Google's globe placeholder for missing favicons), revert to the letter.
+function logoHTML(c, opts = {}) {
+  const size = opts.size || 36;       // outer circle px
+  const innerPad = opts.pad || 8;     // padding around the image
+  const cls = opts.cls || 'logo';
+  const bg = avatarColor(c.name);
+  const fb = initial(c.name);
+  let domain = '';
+  try { domain = new URL(c.site).hostname.replace(/^www\./, ''); } catch {}
+  if (!domain) {
+    return `<div class="${cls}" style="background:${bg};width:${size}px;height:${size}px">${fb}</div>`;
+  }
+  const url = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=64`;
+  const inner = size - innerPad;
+  return `
+    <div class="${cls}" data-fb="${fb}" data-bg="${bg}" style="background:${bg};width:${size}px;height:${size}px">
+      <img src="${url}" alt="" referrerpolicy="no-referrer"
+        style="width:0;height:0;opacity:0"
+        onload="__logoLoaded(this, ${inner})"
+        onerror="__logoFail(this)" />
+      <span class="logo-letter">${fb}</span>
+    </div>`;
+}
+window.__logoLoaded = function(img, innerSize) {
+  if (img.naturalWidth >= 24 && img.naturalHeight >= 24) {
+    const wrap = img.parentNode;
+    wrap.classList.add('has-icon');
+    wrap.style.background = '';
+    img.style.cssText = `width:${innerSize}px;height:${innerSize}px;border-radius:4px;display:block;object-fit:contain;opacity:1`;
+    const letter = wrap.querySelector('.logo-letter');
+    if (letter) letter.style.display = 'none';
+  } else {
+    img.remove();
+  }
+};
+window.__logoFail = function(img) { img.remove(); };
+
+// ---- Vibe voting (localStorage) ----
+const VOTES_KEY = 'sfcafes-vibe-votes-v1';
+const userVotes = (() => {
+  try { return JSON.parse(localStorage.getItem(VOTES_KEY) || '{}'); }
+  catch { return {}; }
+})();
+function saveVotes() {
+  try { localStorage.setItem(VOTES_KEY, JSON.stringify(userVotes)); } catch {}
+}
+function vibeFor(c) {
+  // seed votes simulate the community baseline
+  const counts = c.vibe_type === 'quiet' ? { quiet: 12, lively: 3 } : { quiet: 3, lively: 12 };
+  const my = userVotes[c.id];
+  if (my) counts[my] += 1;
+  const label = counts.quiet >= counts.lively ? 'quiet' : 'lively';
+  return { label, counts, my };
+}
+function castVote(cafeId, key) {
+  if (userVotes[cafeId] === key) delete userVotes[cafeId];
+  else userVotes[cafeId] = key;
+  saveVotes();
+  render();
+  if (modalCurrentId === cafeId) openModal(cafeId);
+}
+
+// ---- Vibe popover ----
+let openPop = null;
+function closePop() {
+  if (openPop) { openPop.remove(); openPop = null; }
+}
+function showVibePop(anchor, cafeId) {
+  closePop();
+  const c = CAFES.find(x => x.id === cafeId);
+  if (!c) return;
+  const v = vibeFor(c);
+  const pop = document.createElement('div');
+  pop.className = 'vibe-pop';
+  pop.innerHTML = `
+    <div class="vibe-pop-title">How does it feel?</div>
+    <button data-key="quiet"  class="${v.my === 'quiet' ? 'active' : ''}">Quiet  <span class="ct">${v.counts.quiet}</span></button>
+    <button data-key="lively" class="${v.my === 'lively' ? 'active' : ''}">Lively <span class="ct">${v.counts.lively}</span></button>
+    <div class="you">${v.my ? 'You voted: ' + v.my : 'Click to cast your vote'}</div>
+  `;
+  document.body.appendChild(pop);
+  const r = anchor.getBoundingClientRect();
+  pop.style.left = Math.min(r.left, window.innerWidth - 200) + 'px';
+  pop.style.top = (r.bottom + 6) + 'px';
+  pop.querySelectorAll('button').forEach(b => {
+    b.addEventListener('click', ev => {
+      ev.stopPropagation();
+      castVote(cafeId, b.dataset.key);
+      closePop();
+    });
+  });
+  openPop = pop;
+}
+document.addEventListener('click', e => {
+  if (openPop && !openPop.contains(e.target) && !e.target.closest('.vibe-badge')) closePop();
+});
+
+// Star rendering — value is 1-5, supports half stars
+function stars(value, size = 13) {
+  const full = `<svg viewBox="0 0 24 24" fill="currentColor" style="width:${size}px;height:${size}px"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>`;
+  const half = `<svg viewBox="0 0 24 24" style="width:${size}px;height:${size}px"><defs><linearGradient id="hg${Math.random().toString(36).slice(2,8)}"><stop offset="50%" stop-color="currentColor"/><stop offset="50%" stop-color="transparent"/></linearGradient></defs><path fill="currentColor" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77V2z"/><path fill="none" stroke="currentColor" stroke-width="1.2" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>`;
+  const empty = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" style="width:${size}px;height:${size}px;color:var(--rule)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>`;
+  let out = '<span class="stars-row">';
+  for (let i = 1; i <= 5; i++) {
+    if (value >= i)            out += full;
+    else if (value >= i - 0.5) out += half;
+    else                       out += empty;
+  }
+  out += '</span>';
+  return out;
+}
+
+// ---- MAP ----
+const map = L.map('map', { scrollWheelZoom: true, zoomControl: true }).setView([37.77, -122.43], 12.4);
+const lightTiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+  attribution: '© OpenStreetMap, © CARTO', subdomains: 'abcd', maxZoom: 19
+});
+const darkTiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  attribution: '© OpenStreetMap, © CARTO', subdomains: 'abcd', maxZoom: 19
+});
+lightTiles.addTo(map);
+
+const markers = {};
+CAFES.forEach(c => {
+  const color = tierColor(scoreTier(c.overall));
+  // Small coffee cup marker
+  const svg = `
+    <svg viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
+      <path d="M3 8h11v6.5A4.5 4.5 0 0 1 9.5 19h-2A4.5 4.5 0 0 1 3 14.5V8z"
+        fill="${color}" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/>
+      <path d="M14 10h2.4a2.4 2.4 0 0 1 0 4.8H14"
+        fill="none" stroke="${color}" stroke-width="1.7" stroke-linecap="round"/>
+      <path d="M6 4.5c.7.8.7 1.4 0 2.2M9 3.5c.7.8.7 1.4 0 2.2"
+        stroke="${color}" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.85"/>
+    </svg>`;
+  const icon = L.divIcon({ html: `<div class="pin">${svg}</div>`, className: '', iconSize: [22, 22], iconAnchor: [11, 18] });
+  const m = L.marker([c.lat, c.lng], { icon }).addTo(map);
+  m.bindPopup(`
+    <div class="pp-row">
+      ${logoHTML(c, { size: 26, pad: 6, cls: 'pp-logo' })}
+      <span class="pp-name">${c.name}</span>
+      <span class="pp-score">${c.overall.toFixed(1)}</span>
+    </div>
+    <div class="pp-meta">${c.hood} · ${prettyHours(c.hours)}</div>
+  `);
+  m.on('click', () => { focusCard(c.id, true); openModal(c.id); });
+  markers[c.id] = m;
+});
+
+// ---- STATE / RENDER ----
+const state = { hood: "", openNow: false, indieOnly: false, vibeFilter: "", sortBy: "overall", q: "", view: "map" };
+
+function passes(c) {
+  if (state.hood && c.hood !== state.hood) return false;
+  if (state.openNow && isOpen(c.hours) === false) return false;
+  if (state.indieOnly && c.chain) return false;
+  if (state.vibeFilter && vibeFor(c).label !== state.vibeFilter) return false;
+  if (state.q) {
+    const q = state.q.toLowerCase();
+    const hay = (c.name + " " + c.hood + " " + (c.tags||[]).join(" ") + " " + c.address).toLowerCase();
+    if (!hay.includes(q)) return false;
+  }
+  return true;
+}
+
+function itemHTML(c) {
+  const open = isOpen(c.hours);
+  const stat = open === null ? '' :
+    `<span class="sep">·</span><span class="stat ${open ? 'open' : 'closed'}"><span class="pulse"></span>${open ? 'Open' : 'Closed'}</span>`;
+  const cat = state.sortBy;
+  const v = categoryScore(c, cat);
+  const cell = (key, label, val) => `
+    <span class="${cat === key ? 'active' : ''}">${label} <b>${val.toFixed(1)}</b></span>`;
+  const vibe = vibeFor(c);
+  const vibeBadge = `<button class="vibe-badge ${vibe.label} ${vibe.my ? 'voted' : ''}" data-vibe-for="${c.id}" type="button" title="Vote on the vibe"><span class="tick"></span>${vibe.label}</button>`;
+  return `
+    <article class="item" data-id="${c.id}">
+      ${logoHTML(c, { size: 36, pad: 10 })}
+      <div class="body">
+        <h3>${c.name}${vibeBadge}</h3>
+        <div class="meta-line">
+          <span>${c.hood}</span>
+          ${stat}
+          <span class="sep">·</span>
+          <span>${prettyHours(c.hours)}</span>
+        </div>
+        <div class="rating-line">
+          ${stars(v, 13)}
+          <span class="num">${v.toFixed(1)}/5 ${cat !== 'overall' ? '<span style="color:var(--accent)">'+cat+'</span>' : ''}</span>
+        </div>
+        <div class="breakdown">
+          ${cell('coffee', 'Coffee', c.coffee)}<span class="sep">·</span>
+          ${cell('food',   'Food',   c.food)}<span class="sep">·</span>
+          ${cell('work',   'Work',   c.work)}<span class="sep">·</span>
+          ${cell('vibes',  'Vibes',  c.vibes)}
+        </div>
+      </div>
+      <div class="score">${v.toFixed(1)}</div>
+    </article>`;
+}
+
+// ---- Detail modal ----
+function modalHTML(c) {
+  const open = isOpen(c.hours);
+  const statHTML = open === null ? '' :
+    `<span class="stat ${open ? 'open' : 'closed'}"><span class="pulse"></span>${open ? 'Open' : 'Closed'}</span><span class="sep">·</span>`;
+  const cat = (label, val, extra='') => `
+    <div class="cat-row">
+      <span class="lbl">${label}</span>
+      <span class="leader"></span>
+      <span class="val">${stars(val, 12)} <span style="color:var(--ink-3);margin-left:4px">${(+val).toFixed(1)}/5</span>${extra}</span>
+    </div>`;
+  const amen = (label, on, note) => `
+    <div class="amen-row ${on === null ? 'unknown' : ''}">
+      <span class="box">${on === true ? '✓' : on === false ? '×' : '?'}</span>
+      <span>${label}</span>
+      ${note ? `<span class="note">${note}</span>` : ''}
+    </div>`;
+
+  const activeCat = state.sortBy;
+  const activeVal = categoryScore(c, activeCat);
+  const vibe = vibeFor(c);
+  const vibeBadgeModal = `<button class="vibe-badge ${vibe.label} ${vibe.my ? 'voted' : ''}" type="button" title="Vote on the vibe"><span class="tick"></span>${vibe.label}</button>`;
+  return `
+    <button class="modal-close" id="modal-close" aria-label="Close">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <header class="modal-head">
+      <div>
+        <h2 class="modal-name">${c.name}${vibeBadgeModal}</h2>
+        <div class="modal-addr">${c.address.toUpperCase()}, SAN FRANCISCO, CA</div>
+        <div class="modal-status">
+          ${statHTML}
+          <span>${prettyHours(c.hours)}</span>
+          <span class="sep">·</span>
+          <a href="${c.site}" target="_blank" rel="noreferrer">WEBSITE
+            <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3h7v7M10 14L21 3M19 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="modal-aside">
+        <div class="modal-score">${activeVal.toFixed(1)}</div>
+        <div class="stars-row" style="margin-top:2px">${stars(activeVal, 14)}</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-3);">${activeCat}</div>
+        <div class="modal-actions">
+          <button aria-label="Save"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l8.84 8.84 8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+          <button aria-label="Share"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 16V4M6 10l6-6 6 6M4 20h16"/></svg></button>
+        </div>
+      </div>
+    </header>
+
+    <section class="modal-section">
+      <div class="section-head">By Category · 1 Rating</div>
+      <div class="cat-grid">
+        ${cat('Coffee', c.coffee)}
+        ${cat('Food', c.food)}
+        ${cat('Work', c.work)}
+        ${cat('Vibes', c.vibes, ` <span style="color:${vibe.label === 'quiet' ? 'var(--accent-2)' : 'var(--accent)'};font-size:10px;text-transform:uppercase;letter-spacing:.1em;margin-left:6px">${vibe.label}</span> <span style="color:var(--ink-3);font-size:10px;margin-left:4px">${vibe.counts.quiet}Q / ${vibe.counts.lively}L</span>`)}
+      </div>
+    </section>
+
+    <section class="modal-section">
+      <div class="section-head">Work Breakdown</div>
+      <div class="cat-grid">
+        ${cat('WiFi', c.wifi)}
+        ${cat('Outlets', c.outlet)}
+        ${cat('Quiet', c.quiet)}
+        ${cat('Seating', c.seats)}
+      </div>
+    </section>
+
+    <section class="modal-section">
+      <div class="section-head">Amenities</div>
+      ${amen('Laptops welcome', c.laptopok)}
+      ${amen('Outlets', c.outlet >= 3)}
+      ${amen('Open after 6pm', c.open_late)}
+      ${amen('Wi-Fi', c.wifi >= 2)}
+    </section>
+
+    <section class="modal-section">
+      <div class="section-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12a10 10 0 0 1 14 0M2 8.5a14 14 0 0 1 20 0M8.5 15.5a5 5 0 0 1 7 0"/><circle cx="12" cy="19" r="1" fill="currentColor"/></svg>
+        Wi-Fi Password
+      </div>
+      <a class="add-link" href="#">+ Add Wi-Fi password</a>
+    </section>
+
+    <section class="modal-section">
+      <div class="section-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7.5" cy="15.5" r="3.5"/><path d="M10 13l8-8M14 5h5v5"/></svg>
+        Restroom Code
+      </div>
+      <a class="add-link" href="#">+ Add restroom code</a>
+    </section>
+
+    <section class="modal-section">
+      <div class="section-head-row">
+        <h3>Photos</h3>
+        <button class="add-photo-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 8h4l2-3h6l2 3h4v11H3z"/><circle cx="12" cy="13" r="3.5"/></svg>
+          Add Photo (0/2)
+        </button>
+      </div>
+    </section>
+
+    <section class="modal-section">
+      <div class="section-head">Reviews (1)</div>
+      <div class="review">
+        <div class="review-head">
+          <span class="avatar" style="background:${avatarColor(c.name)}">${initial(c.name)}</span>
+          <span class="user">sfcafelist</span>
+          <span class="right">${c.score.toFixed(1)}/5</span>
+          <span class="date">5/15/2026</span>
+        </div>
+        <p class="review-body">${c.blurb}</p>
+      </div>
+    </section>
+
+    <button class="rate-spot">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>
+      Rate this spot
+    </button>
+  `;
+}
+
+let modalCurrentId = null;
+function openModal(id) {
+  const c = CAFES.find(x => x.id === id);
+  if (!c) return;
+  modalCurrentId = id;
+  const overlay = document.getElementById('modal-overlay');
+  const modal = document.getElementById('modal');
+  modal.innerHTML = modalHTML(c);
+  modal.scrollTop = 0;
+  overlay.classList.add('open');
+  document.getElementById('modal-close').addEventListener('click', closeModal);
+  // wire vibe badge inside modal
+  const mb = modal.querySelector('.vibe-badge');
+  if (mb) mb.addEventListener('click', ev => { ev.stopPropagation(); showVibePop(mb, id); });
+}
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  modalCurrentId = null;
+  closePop();
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+document.getElementById('modal-overlay').addEventListener('click', e => {
+  if (e.target.id === 'modal-overlay') closeModal();
+});
+
+function render() {
+  const list = CAFES.filter(passes);
+  const sorted = list.slice().sort((a,b) => categoryScore(b, state.sortBy) - categoryScore(a, state.sortBy));
+  document.getElementById('cards').innerHTML = sorted.map(itemHTML).join('');
+  if (state.view === 'grid') renderGrid(sorted);
+
+  const vis = new Set(sorted.map(c => c.id));
+  for (const id in markers) {
+    const m = markers[id];
+    if (vis.has(id)) { if (!map.hasLayer(m)) m.addTo(map); }
+    else { if (map.hasLayer(m)) map.removeLayer(m); }
+  }
+
+  document.querySelectorAll('.vibe-badge[data-vibe-for]').forEach(badge => {
+    badge.addEventListener('click', ev => {
+      ev.stopPropagation();
+      showVibePop(badge, badge.dataset.vibeFor);
+    });
+  });
+  document.querySelectorAll('.item').forEach(el => {
+    el.addEventListener('click', (ev) => {
+      if (ev.target.closest('.vibe-badge')) return; // don't open modal when clicking badge
+      const id = el.dataset.id;
+      const c = CAFES.find(x => x.id === id);
+      if (markers[id] && c) {
+        map.flyTo([c.lat, c.lng], 14.5, { duration: 0.5 });
+        focusCard(id, false);
+        openModal(id);
+      }
+    });
+  });
+}
+
+function focusCard(id, scroll = true) {
+  document.querySelectorAll('.item').forEach(el => el.classList.toggle('active', el.dataset.id === id));
+  if (scroll) {
+    const el = document.querySelector(`.item[data-id="${id}"]`);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+// Populate hoods
+const hoodSel = document.getElementById('hood');
+HOODS.forEach(h => {
+  const o = document.createElement('option'); o.value = h; o.textContent = h;
+  hoodSel.appendChild(o);
+});
+
+function updateToolbar() {
+  // Sort pill
+  const sortLabel = document.getElementById('sort-label');
+  const sortPill  = document.getElementById('sort-pill');
+  const sortNames = { overall: 'Overall', work: 'Work', food: 'Food', coffee: 'Coffee', vibes: 'Vibes' };
+  sortLabel.textContent = sortNames[state.sortBy] || 'Overall';
+  sortPill.classList.toggle('active', state.sortBy !== 'overall');
+
+  // Hood pill
+  const hoodLabel = document.getElementById('hood-label');
+  const hoodPill  = document.getElementById('hood-pill');
+  hoodLabel.textContent = state.hood || 'Filter';
+  hoodPill.classList.toggle('active', !!state.hood);
+
+  // Toggles
+  document.getElementById('t-open').classList.toggle('on', state.openNow);
+  document.getElementById('t-indie').classList.toggle('on', state.indieOnly);
+  document.getElementById('t-quiet').classList.toggle('on', state.vibeFilter === 'quiet');
+
+  // Clear button visibility
+  const anyActive = !!(state.hood || state.openNow || state.indieOnly || state.vibeFilter || state.q || state.sortBy !== 'overall');
+  document.getElementById('t-clear').classList.toggle('show', anyActive);
+}
+
+function clearAllFilters() {
+  state.hood = "";
+  state.openNow = false;
+  state.indieOnly = false;
+  state.vibeFilter = "";
+  state.sortBy = "overall";
+  state.q = "";
+  document.getElementById('q').value = "";
+  document.getElementById('hood').value = "";
+  document.getElementById('sort').value = "overall";
+  updateToolbar();
+  render();
+}
+
+hoodSel.addEventListener('change', e => { state.hood = e.target.value; updateToolbar(); render(); });
+
+document.getElementById('t-open').addEventListener('click', e => {
+  state.openNow = !state.openNow;
+  updateToolbar();
+  render();
+});
+document.getElementById('t-indie').addEventListener('click', e => {
+  state.indieOnly = !state.indieOnly;
+  updateToolbar();
+  render();
+});
+document.getElementById('t-quiet').addEventListener('click', () => {
+  state.vibeFilter = state.vibeFilter === 'quiet' ? '' : 'quiet';
+  updateToolbar(); render();
+});
+document.getElementById('sort').addEventListener('change', e => {
+  state.sortBy = e.target.value;
+  updateToolbar();
+  render();
+});
+document.getElementById('q').addEventListener('input', e => {
+  state.q = e.target.value;
+  updateToolbar();
+  render();
+});
+document.getElementById('t-clear').addEventListener('click', clearAllFilters);
+
+// ---- Coffee + Nominate aux modals ----
+function openAux(id) {
+  closeAuxModals();
+  document.getElementById(id).classList.add('open');
+}
+function closeAuxModals() {
+  document.getElementById('coffee-overlay').classList.remove('open');
+  document.getElementById('nominate-overlay').classList.remove('open');
+  const t = document.getElementById('tip-thanks');
+  if (t) t.textContent = '';
+}
+document.getElementById('tip-link').addEventListener('click', e => { e.preventDefault(); openAux('coffee-overlay'); });
+document.getElementById('t-add').addEventListener('click', e => { e.preventDefault(); openAux('nominate-overlay'); });
+
+// ---- GRID VIEW ----
+function gridCardHTML(c) {
+  const open = isOpen(c.hours);
+  const stat = open === null ? '' :
+    `<span class="sep">·</span><span class="stat ${open ? 'open' : 'closed'}"><span class="pulse"></span>${open ? 'Open' : 'Closed'}</span>`;
+  const cat = state.sortBy;
+  const v = categoryScore(c, cat);
+  // Top 3 highest-scoring categories for this cafe
+  const cats = [
+    { label: 'Coffee', val: c.coffee },
+    { label: 'Food',   val: c.food },
+    { label: 'Work',   val: c.work },
+    { label: 'Vibes',  val: c.vibes }
+  ];
+  const top3 = cats.slice().sort((a,b) => b.val - a.val).slice(0, 3);
+  const breakdown = top3.map(t => `<span><b>${t.label}</b> ${t.val.toFixed(1)}</span>`).join('<span class="sep">·</span>');
+  return `
+    <article class="grid-card" data-id="${c.id}">
+      ${logoHTML(c, { size: 36, pad: 10 })}
+      <div class="body">
+        <h3 class="name">${c.name}</h3>
+        <div class="meta-line">
+          <span>${c.hood}</span>
+          ${stat}
+          <span class="sep">·</span>
+          <span>${prettyHours(c.hours)}</span>
+        </div>
+        <div class="breakdown">${breakdown}</div>
+      </div>
+      <div class="score">${v.toFixed(1)}</div>
+    </article>`;
+}
+
+function renderGrid(sorted) {
+  if (!sorted) {
+    const list = CAFES.filter(passes);
+    sorted = list.slice().sort((a,b) => categoryScore(b, state.sortBy) - categoryScore(a, state.sortBy));
+  }
+  document.getElementById('grid-inner').innerHTML = sorted.map(gridCardHTML).join('');
+  document.querySelectorAll('.grid-card').forEach(el => {
+    el.addEventListener('click', () => openModal(el.dataset.id));
+  });
+  // sync grid filter dropdown label + count
+  const gridLabel = document.getElementById('grid-sort-label');
+  const gridSel   = document.getElementById('grid-sort');
+  const labels = { overall: 'Best Overall', work: 'Best for Work', coffee: 'Best Coffee', food: 'Best Food', vibes: 'Best Vibes' };
+  if (gridLabel) gridLabel.textContent = labels[state.sortBy] || 'Best Overall';
+  if (gridSel)   gridSel.value = state.sortBy;
+  const cnt = document.getElementById('grid-count');
+  if (cnt) cnt.textContent = `${sorted.length} spots`;
+}
+
+function setView(view) {
+  state.view = view;
+  const mapEl = document.getElementById('map');
+  const gridEl = document.getElementById('grid-view');
+  if (view === 'grid') {
+    mapEl.style.display = 'none';
+    gridEl.hidden = false;
+    renderGrid();
+  } else {
+    mapEl.style.display = '';
+    gridEl.hidden = true;
+    setTimeout(() => map.invalidateSize(), 50);
+  }
+  document.querySelectorAll('.map-toolbar .opt').forEach(el => {
+    el.classList.toggle('on', el.dataset.view === view);
+  });
+}
+
+// Wire the Map / Grid toggle
+document.querySelectorAll('.map-toolbar .opt').forEach((el, i) => {
+  el.dataset.view = i === 0 ? 'map' : 'grid';
+  el.addEventListener('click', () => setView(el.dataset.view));
+});
+
+// ---- DARK MODE ----
+const THEME_KEY = 'sfcafes-theme';
+const themeIcon = document.querySelectorAll('.map-toolbar .ic')[0];
+
+function applyTheme(theme) {
+  const dark = theme === 'dark';
+  document.body.classList.toggle('dark', dark);
+  if (dark) {
+    if (map.hasLayer(lightTiles)) map.removeLayer(lightTiles);
+    if (!map.hasLayer(darkTiles)) darkTiles.addTo(map);
+    themeIcon.innerHTML = '<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>';
+  } else {
+    if (map.hasLayer(darkTiles)) map.removeLayer(darkTiles);
+    if (!map.hasLayer(lightTiles)) lightTiles.addTo(map);
+    themeIcon.innerHTML = '<circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4l1.4-1.4M17 7l1.4-1.4"/>';
+  }
+  try { localStorage.setItem(THEME_KEY, theme); } catch {}
+}
+
+themeIcon.style.cursor = 'pointer';
+themeIcon.setAttribute('title', 'Toggle dark mode');
+themeIcon.addEventListener('click', () => {
+  const next = document.body.classList.contains('dark') ? 'light' : 'dark';
+  applyTheme(next);
+});
+
+(() => {
+  let saved = null;
+  try { saved = localStorage.getItem(THEME_KEY); } catch {}
+  if (saved === 'dark') applyTheme('dark');
+})();
+
+// Grid sort dropdown — keeps state.sortBy in sync with sidebar Sort
+document.getElementById('grid-sort').addEventListener('change', e => {
+  state.sortBy = e.target.value;
+  document.getElementById('sort').value = state.sortBy;
+  updateToolbar();
+  render();
+});
+
+// ---- SHARE ----
+const shareUrl  = window.location.href;
+const shareText = 'SF cafes — a work-friendly coffee guide for San Francisco';
+
+function positionSharePop(anchor) {
+  const pop = document.getElementById('share-pop');
+  const r = anchor.getBoundingClientRect();
+  pop.style.top = (r.bottom + 8) + 'px';
+  pop.style.left = Math.max(8, r.right - 240) + 'px';
+}
+
+function toggleSharePop(anchor) {
+  const pop = document.getElementById('share-pop');
+  if (pop.classList.contains('open')) {
+    pop.classList.remove('open');
+  } else {
+    positionSharePop(anchor);
+    pop.classList.add('open');
+  }
+}
+
+// Find the share icon (2nd .ic in the map toolbar)
+const shareIcon = document.querySelectorAll('.map-toolbar .ic')[1];
+shareIcon.style.cursor = 'pointer';
+shareIcon.addEventListener('click', async (e) => {
+  e.stopPropagation();
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: 'SF cafes', text: shareText, url: shareUrl });
+      return;
+    } catch {/* fallthrough to popover */}
+  }
+  toggleSharePop(shareIcon);
+});
+
+document.addEventListener('click', e => {
+  const pop = document.getElementById('share-pop');
+  if (pop.classList.contains('open') && !pop.contains(e.target) && e.target !== shareIcon) {
+    pop.classList.remove('open');
+  }
+});
+
+document.querySelectorAll('.share-opt').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    const action = btn.dataset.share;
+    if (action === 'copy') {
+      try { await navigator.clipboard.writeText(shareUrl); } catch {}
+      btn.classList.add('copied');
+      btn.querySelector('.lbl').textContent = 'Copied!';
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        btn.querySelector('.lbl').textContent = 'Copy link';
+        document.getElementById('share-pop').classList.remove('open');
+      }, 1200);
+      return;
+    }
+    if (action === 'email') {
+      window.location.href = `mailto:?subject=${encodeURIComponent('SF cafes')}&body=${encodeURIComponent(shareText + '\n\n' + shareUrl)}`;
+    } else if (action === 'twitter') {
+      window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`, '_blank', 'noopener');
+    } else if (action === 'messages') {
+      window.location.href = `sms:?&body=${encodeURIComponent(shareText + ' ' + shareUrl)}`;
+    } else if (action === 'whatsapp') {
+      window.open(`https://wa.me/?text=${encodeURIComponent(shareText + ' ' + shareUrl)}`, '_blank', 'noopener');
+    } else if (action === 'facebook') {
+      window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank', 'noopener');
+    } else if (action === 'linkedin') {
+      window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`, '_blank', 'noopener');
+    }
+    document.getElementById('share-pop').classList.remove('open');
+  });
+});
+
+document.querySelectorAll('[data-close-aux]').forEach(b => {
+  b.addEventListener('click', closeAuxModals);
+});
+['coffee-overlay', 'nominate-overlay'].forEach(id => {
+  const ov = document.getElementById(id);
+  ov.addEventListener('click', e => { if (e.target === ov) closeAuxModals(); });
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAuxModals(); });
+
+document.getElementById('tip-go').addEventListener('click', () => {
+  const amt = +document.getElementById('tip-amount').value || 0;
+  if (amt <= 0) return;
+  document.getElementById('tip-thanks').textContent = `Thanks for the $${amt} tip!`;
+});
+document.getElementById('signin-go').addEventListener('click', () => {
+  alert('Sign in / Sign up is not wired up yet in this demo build.');
+});
+
+updateToolbar();
+render();
+</script>
+</body>
+</html>
