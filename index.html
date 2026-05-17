@@ -2207,6 +2207,7 @@ function openAux(id) {
 function closeAuxModals() {
   document.getElementById('coffee-overlay').classList.remove('open');
   document.getElementById('nominate-overlay').classList.remove('open');
+  document.getElementById('auth-overlay').classList.remove('open');
   const t = document.getElementById('tip-thanks');
   if (t) t.textContent = '';
 }
@@ -2405,7 +2406,7 @@ document.querySelectorAll('.share-opt').forEach(btn => {
 document.querySelectorAll('[data-close-aux]').forEach(b => {
   b.addEventListener('click', closeAuxModals);
 });
-['coffee-overlay', 'nominate-overlay'].forEach(id => {
+['coffee-overlay', 'nominate-overlay', 'auth-overlay'].forEach(id => {
   const ov = document.getElementById(id);
   ov.addEventListener('click', e => { if (e.target === ov) closeAuxModals(); });
 });
