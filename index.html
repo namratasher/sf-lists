@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>SF Cafes — Work-friendly coffee shops</title>
-<meta name="description" content="A curated guide to the best work-friendly coffee shops in San Francisco. Wifi, outlets, vibes — rated and mapped." />
+<meta name="description" content="A curated guide to the best work-friendly cafes in San Francisco. Wifi, outlets, vibes — rated and mapped." />
 
 <!-- Favicons -->
 <link rel="icon" type="image/png" href="/favicon.png" />
@@ -15,12 +15,12 @@
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="SF Cafes" />
 <meta property="og:title" content="SF Cafes — Work-friendly coffee shops" />
-<meta property="og:description" content="A curated guide to the best work-friendly coffee shops in San Francisco. Wifi, outlets, vibes — rated and mapped." />
+<meta property="og:description" content="A curated guide to the best work-friendly cafes in San Francisco. Wifi, outlets, vibes — rated and mapped." />
 <meta property="og:url" content="https://thesflist.com/" />
 <meta property="og:image" content="https://thesflist.com/og-image.png" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
-<meta property="og:image:alt" content="SF cafes — a curated coffee guide to San Francisco" />
+<meta property="og:image:alt" content="SF cafes — a curated cafe guide to San Francisco" />
 
 <!-- Twitter / X -->
 <meta name="twitter:card" content="summary_large_image" />
@@ -650,27 +650,7 @@ a { color: inherit; text-decoration: none; }
   color: var(--accent);
   display: inline-block;
   margin-top: 4px;
-  cursor: pointer;
 }
-.contrib-value {
-  font-family: "JetBrains Mono", monospace;
-  font-size: 14px;
-  color: var(--ink);
-  background: var(--bg-2);
-  padding: 8px 12px;
-  border-radius: 4px;
-  display: inline-block;
-  letter-spacing: 0.02em;
-  user-select: all;
-}
-.contrib-avg {
-  margin-top: 14px;
-  font-family: "JetBrains Mono", monospace;
-  font-size: 11px;
-  letter-spacing: 0.06em;
-  color: var(--ink-3);
-}
-.contrib-avg b { color: var(--accent); font-weight: 600; }
 
 .add-photo-btn {
   background: var(--paper);
@@ -1541,11 +1521,6 @@ a { color: inherit; text-decoration: none; }
 <!-- USER MENU POPOVER -->
 <div class="user-menu" id="user-menu" role="menu"></div>
 
-<!-- RATE MODAL -->
-<div class="modal-overlay sm" id="rate-overlay">
-  <article class="modal sm" id="rate-content"></article>
-</div>
-
 <!-- NOMINATE MODAL -->
 <div class="modal-overlay sm" id="nominate-overlay">
   <article class="modal sm">
@@ -1607,7 +1582,6 @@ const CAFES = [
   { id: "arsicault-arguello", name: "Arsicault Bakery", hood: "Inner Richmond", address: "397 Arguello Blvd", lat: 37.7813, lng: -122.4585, blurb: "Some of the best croissants in America.", wifi: 1, outlet: 1, quiet: 3, seats: 1, laptopok: false, open_late: false, hours: "7a–3p", tags: ["Bakery","Croissants"], site: "https://arsicaultbakery.com" },
   { id: "tadaima-marina", name: "Tadaima — Marina", hood: "Marina", address: "1849 Union St", lat: 37.7976, lng: -122.4321, blurb: "Original Tadaima — matcha-focused Japanese cafe with mochi, wagashi, and a calm minimalist room.", wifi: 3, outlet: 2, quiet: 4, seats: 2, laptopok: false, open_late: false, hours: "11a–5:30p", tags: ["Matcha","Japanese","Pastries"], site: "https://tadaimasf.com" },
   { id: "tadaima-mission", name: "Tadaima — Mission", hood: "Mission", address: "3515 20th St", lat: 37.7587, lng: -122.4234, blurb: "Mission outpost of Tadaima — same matcha-and-wagashi formula, slightly bigger room, popular afternoons.", wifi: 3, outlet: 2, quiet: 3, seats: 3, laptopok: true, open_late: false, hours: "11a–5:30p", tags: ["Matcha","Japanese","Pastries"], site: "https://tadaimasf.com" },
-  { id: "tadaima-inner-sunset", name: "Tadaima — Inner Sunset", hood: "Inner Sunset", address: "1248 9th Ave", lat: 37.7644, lng: -122.4664, blurb: "Newest Tadaima (Feb 2026) by the park — matcha lattes, mochi, and a serene corner setting.", wifi: 3, outlet: 2, quiet: 4, seats: 3, laptopok: true, open_late: false, hours: "11a–5:30p", tags: ["Matcha","Japanese","Pastries"], site: "https://tadaimasf.com" },
   { id: "kissaten-jp", name: "Kissaten", hood: "Japantown", address: "1730 Buchanan St", lat: 37.7861, lng: -122.4296, blurb: "Traditional Japanese tea house pace — matcha, hojicha, and minimal sweets in a meditative room. Read a book, slow down.", wifi: 3, outlet: 2, quiet: 5, seats: 3, laptopok: true, open_late: false, hours: "9a–6p", tags: ["Matcha","Japanese","Tea house"], site: "" },
   { id: "stonemill-matcha", name: "Stonemill Matcha", hood: "Mission", address: "561 Valencia St", lat: 37.7616, lng: -122.4216, blurb: "All-matcha all-the-time — ceremonial-grade lattes, matcha soft serve, savory bowls, and a stark minimalist room.", wifi: 4, outlet: 2, quiet: 3, seats: 3, laptopok: true, open_late: false, hours: "8a–6p", tags: ["Matcha","Minimal","Soft serve"], site: "https://stonemillmatcha.com" },
   { id: "samovar-mission", name: "Samovar Tea Lounge", hood: "Mission", address: "411 Valencia St", lat: 37.7670, lng: -122.4220, blurb: "Tea-house calm on Valencia. Strong matcha program, deep tea menu, real food. Built for long, contemplative afternoons.", wifi: 4, outlet: 3, quiet: 4, seats: 4, laptopok: true, open_late: false, hours: "8a–7p", tags: ["Matcha","Tea","Full food"], site: "https://samovartea.com" },
@@ -1634,11 +1608,6 @@ const CAFES = [
   { id: "chemine", name: "Cheminé", hood: "Cow Hollow", address: "3030 Fillmore St", lat: 37.7976, lng: -122.4365, blurb: "Mediterranean bakery-cafe on Fillmore — baklava cheesecake, borek, light salads. Family-run, friendly.", wifi: 3, outlet: 2, quiet: 3, seats: 3, laptopok: true, open_late: false, hours: "8a–5p", tags: ["Mediterranean","Bakery"], site: "" },
   { id: "interval-long-now", name: "The Interval at Long Now", hood: "Marina", address: "2 Marina Blvd, Fort Mason Bldg A", lat: 37.8059, lng: -122.4313, blurb: "Bar-cafe at Fort Mason inside the Long Now Foundation — books, single-origin coffee, cocktails. Truly singular.", wifi: 4, outlet: 3, quiet: 4, seats: 4, laptopok: true, open_late: true, hours: "10a–12a", tags: ["Bar","Books","Long Now"], site: "https://longnow.org/interval/" },
   { id: "joe-juice-mission-bay", name: "Joe & The Juice — Mission Bay", hood: "Mission Bay", address: "1155 4th St", lat: 37.7708, lng: -122.3917, blurb: "Danish juice-and-coffee chain with high-energy tunes and tunacado sandwiches. Standing-room counter culture.", wifi: 4, outlet: 2, quiet: 2, seats: 2, laptopok: false, open_late: false, hours: "7a–7p", tags: ["Juice","Sandwiches","Chain"], site: "https://joejuice.com" },
-  { id: "joe-juice-market", name: "Joe & The Juice — Market", hood: "FiDi", address: "525 Market St", lat: 37.7895, lng: -122.4007, blurb: "Downtown commuter Joe & The Juice — fast, loud, perfect for a grab-and-go matcha or smoothie.", wifi: 3, outlet: 1, quiet: 1, seats: 2, laptopok: false, open_late: false, hours: "6:30a–7p", tags: ["Juice","Sandwiches","Chain"], site: "https://joejuice.com" },
-  { id: "joe-juice-howard", name: "Joe & The Juice — Howard", hood: "SoMa", address: "301 Howard St", lat: 37.7891, lng: -122.3957, blurb: "SoMa workhorse Joe & The Juice — same playbook, more techies. Caffeine and smoothies on rotation.", wifi: 3, outlet: 1, quiet: 1, seats: 2, laptopok: false, open_late: false, hours: "6:30a–7p", tags: ["Juice","Sandwiches","Chain"], site: "https://joejuice.com" },
-  { id: "joe-juice-california", name: "Joe & The Juice — California", hood: "FiDi", address: "50 California St", lat: 37.7929, lng: -122.3973, blurb: "Financial District lunch-rush Joe & The Juice — packed at noon, quiet by 3.", wifi: 3, outlet: 1, quiet: 1, seats: 2, laptopok: false, open_late: false, hours: "6:30a–6p", tags: ["Juice","Sandwiches","Chain"], site: "https://joejuice.com" },
-  { id: "joe-juice-fillmore", name: "Joe & The Juice — Fillmore", hood: "Lower Pac Heights", address: "2213 Fillmore St", lat: 37.7878, lng: -122.4344, blurb: "Fillmore Joe & The Juice — Saturday brunch overflow, athleisure crowd, reliable matcha.", wifi: 3, outlet: 1, quiet: 2, seats: 2, laptopok: false, open_late: false, hours: "7a–7p", tags: ["Juice","Sandwiches","Chain"], site: "https://joejuice.com" },
-  { id: "joe-juice-montgomery", name: "Joe & The Juice — Montgomery", hood: "FiDi", address: "235 Montgomery St", lat: 37.7912, lng: -122.4023, blurb: "FiDi tower Joe & The Juice — the busiest of the bunch. In and out fast.", wifi: 3, outlet: 1, quiet: 1, seats: 2, laptopok: false, open_late: false, hours: "6:30a–7p", tags: ["Juice","Sandwiches","Chain"], site: "https://joejuice.com" }
 ];
 
 // ---- Category ratings & business type ----
@@ -1679,7 +1648,6 @@ const EXTRA = {
   "arsicault-arguello":          { food: 5, coffee: 4, vibes: 4, vibe_type: "lively", chain: true  },
   "tadaima-marina":              { food: 4, coffee: 5, vibes: 5, vibe_type: "quiet",  chain: true  },
   "tadaima-mission":             { food: 4, coffee: 5, vibes: 4, vibe_type: "lively", chain: true  },
-  "tadaima-inner-sunset":        { food: 4, coffee: 5, vibes: 5, vibe_type: "quiet",  chain: true  },
   "kissaten-jp":                 { food: 4, coffee: 4, vibes: 5, vibe_type: "quiet",  chain: false },
   "stonemill-matcha":            { food: 4, coffee: 5, vibes: 4, vibe_type: "lively", chain: true  },
   "samovar-mission":             { food: 4, coffee: 4, vibes: 5, vibe_type: "quiet",  chain: true  },
@@ -1706,11 +1674,6 @@ const EXTRA = {
   "chemine":                     { food: 5, coffee: 3, vibes: 4, vibe_type: "lively", chain: false },
   "interval-long-now":           { food: 3, coffee: 4, vibes: 5, vibe_type: "quiet",  chain: false },
   "joe-juice-mission-bay":       { food: 4, coffee: 3, vibes: 2, vibe_type: "lively", chain: true  },
-  "joe-juice-market":            { food: 4, coffee: 3, vibes: 2, vibe_type: "lively", chain: true  },
-  "joe-juice-howard":            { food: 4, coffee: 3, vibes: 2, vibe_type: "lively", chain: true  },
-  "joe-juice-california":        { food: 4, coffee: 3, vibes: 2, vibe_type: "lively", chain: true  },
-  "joe-juice-fillmore":          { food: 4, coffee: 3, vibes: 2, vibe_type: "lively", chain: true  },
-  "joe-juice-montgomery":        { food: 4, coffee: 3, vibes: 2, vibe_type: "lively", chain: true  }
 };
 
 // ---- helpers ----
@@ -2067,9 +2030,7 @@ function modalHTML(c) {
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12a10 10 0 0 1 14 0M2 8.5a14 14 0 0 1 20 0M8.5 15.5a5 5 0 0 1 7 0"/><circle cx="12" cy="19" r="1" fill="currentColor"/></svg>
         Wi-Fi Password
       </div>
-      ${extras?.wifi
-        ? `<div class="contrib-value">${escapeHtml(extras.wifi)}</div>`
-        : `<a class="add-link" href="#" data-action="wifi">+ Add Wi-Fi password</a>`}
+      <a class="add-link" href="#">+ Add Wi-Fi password</a>
     </section>
 
     <section class="modal-section">
@@ -2077,15 +2038,13 @@ function modalHTML(c) {
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7.5" cy="15.5" r="3.5"/><path d="M10 13l8-8M14 5h5v5"/></svg>
         Restroom Code
       </div>
-      ${extras?.restroom
-        ? `<div class="contrib-value">${escapeHtml(extras.restroom)}</div>`
-        : `<a class="add-link" href="#" data-action="restroom">+ Add restroom code</a>`}
+      <a class="add-link" href="#">+ Add restroom code</a>
     </section>
 
     <section class="modal-section">
       <div class="section-head-row">
         <h3>Photos</h3>
-        <button class="add-photo-btn" data-action="photo">
+        <button class="add-photo-btn">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 8h4l2-3h6l2 3h4v11H3z"/><circle cx="12" cy="13" r="3.5"/></svg>
           Add Photo (0/2)
         </button>
@@ -2093,7 +2052,7 @@ function modalHTML(c) {
     </section>
 
     <section class="modal-section">
-      <div class="section-head">Reviews (${1 + (extras?.ratings?.length || 0)})</div>
+      <div class="section-head">Reviews (1)</div>
       <div class="review">
         <div class="review-head">
           <span class="avatar" style="background:${avatarColor(c.name)}">${initial(c.name)}</span>
@@ -2103,179 +2062,29 @@ function modalHTML(c) {
         </div>
         <p class="review-body">${c.blurb}</p>
       </div>
-      ${extras?.userAvg
-        ? `<div class="contrib-avg">${extras.ratings.length} user rating${extras.ratings.length === 1 ? '' : 's'} · avg <b>${extras.userAvg.toFixed(1)}/5</b></div>`
-        : ''}
     </section>
 
-    <button class="rate-spot" data-action="rate">
+    <button class="rate-spot">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>
-      ${extras?.myRating ? 'Update your rating' : 'Rate this spot'}
+      Rate this spot
     </button>
   `;
 }
 
-function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-}
-
 let modalCurrentId = null;
-
-async function fetchCafeExtras(cafeId) {
-  try {
-    const [wifi, restroom, ratings] = await Promise.all([
-      sb.from('wifi_codes').select('password').eq('cafe_id', cafeId).order('updated_at', { ascending: false }).limit(1).maybeSingle(),
-      sb.from('restroom_codes').select('code').eq('cafe_id', cafeId).order('updated_at', { ascending: false }).limit(1).maybeSingle(),
-      sb.from('ratings').select('work, food, coffee, vibes, user_id').eq('cafe_id', cafeId)
-    ]);
-    const rows = ratings.data || [];
-    let userAvg = null;
-    if (rows.length) {
-      const cells = rows.flatMap(r => [r.work, r.food, r.coffee, r.vibes].filter(v => typeof v === 'number'));
-      if (cells.length) userAvg = cells.reduce((a, b) => a + b, 0) / cells.length;
-    }
-    const myRating = currentUser
-      ? rows.find(r => r.user_id === currentUser.id) || null
-      : null;
-    return {
-      wifi: wifi?.data?.password || null,
-      restroom: restroom?.data?.code || null,
-      ratings: rows,
-      userAvg,
-      myRating
-    };
-  } catch (e) {
-    console.warn('fetchCafeExtras failed', e);
-    return { wifi: null, restroom: null, ratings: [], userAvg: null, myRating: null };
-  }
-}
-
-function wireModalActions(c) {
-  const modal = document.getElementById('modal');
-  const wifiLink = modal.querySelector('.add-link[data-action="wifi"]');
-  const rrLink   = modal.querySelector('.add-link[data-action="restroom"]');
-  const photoBtn = modal.querySelector('[data-action="photo"]');
-  const rateBtn  = modal.querySelector('[data-action="rate"]');
-  const wifiVal  = modal.querySelector('.contrib-value');
-  if (wifiLink) wifiLink.addEventListener('click', (e) => { e.preventDefault(); promptAndSaveWifi(c.id); });
-  if (rrLink)   rrLink.addEventListener('click',   (e) => { e.preventDefault(); promptAndSaveRestroom(c.id); });
-  if (photoBtn) photoBtn.addEventListener('click', () => alert('Photo uploads need Supabase Storage to be enabled first. Coming in a future update.'));
-  if (rateBtn)  rateBtn.addEventListener('click',  () => openRateModal(c));
-}
-
-async function promptAndSaveWifi(cafeId) {
-  if (!currentUser) { openAux('auth-overlay'); return; }
-  const pwd = prompt("What's the Wi-Fi password?");
-  if (!pwd || !pwd.trim()) return;
-  const { error } = await sb.from('wifi_codes').upsert({
-    cafe_id: cafeId, user_id: currentUser.id, password: pwd.trim(),
-    updated_at: new Date().toISOString()
-  });
-  if (error) { alert('Could not save: ' + error.message); return; }
-  openModal(cafeId);
-}
-
-async function promptAndSaveRestroom(cafeId) {
-  if (!currentUser) { openAux('auth-overlay'); return; }
-  const code = prompt("What's the restroom code?");
-  if (!code || !code.trim()) return;
-  const { error } = await sb.from('restroom_codes').upsert({
-    cafe_id: cafeId, user_id: currentUser.id, code: code.trim(),
-    updated_at: new Date().toISOString()
-  });
-  if (error) { alert('Could not save: ' + error.message); return; }
-  openModal(cafeId);
-}
-
-function ratingRow(label, name, defaultVal) {
-  return `
-    <div style="display:flex;align-items:center;gap:14px;">
-      <label style="font-family:'Space Grotesk',sans-serif;font-size:11px;text-transform:uppercase;letter-spacing:0.14em;color:var(--ink-2);min-width:64px;">${label}</label>
-      <input type="range" name="${name}" min="1" max="5" step="1" value="${defaultVal}" required style="flex:1;accent-color:var(--accent);" />
-      <span class="rate-val" style="font-family:'Fraunces',serif;font-size:18px;font-weight:600;color:var(--ink);min-width:22px;text-align:right;font-variant-numeric:tabular-nums;">${defaultVal}</span>
-    </div>
-  `;
-}
-
-function openRateModal(c) {
-  if (!currentUser) { openAux('auth-overlay'); return; }
-  const my = null; // we'll fetch fresh below if it exists
-  fetchCafeExtras(c.id).then(extras => {
-    const r = extras.myRating || { coffee: 3, food: 3, work: 3, vibes: 3 };
-    const content = document.getElementById('rate-content');
-    content.innerHTML = `
-      <button class="modal-close" data-close-aux aria-label="Close">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
-      </button>
-      <h2>Rate ${escapeHtml(c.name)}</h2>
-      <p class="sub">How would you rate this spot? 1 = poor, 5 = excellent.</p>
-      <form id="rate-form" style="display:flex;flex-direction:column;gap:18px;margin-top:20px;">
-        ${ratingRow('Coffee', 'coffee', r.coffee ?? 3)}
-        ${ratingRow('Food',   'food',   r.food   ?? 3)}
-        ${ratingRow('Work',   'work',   r.work   ?? 3)}
-        ${ratingRow('Vibes',  'vibes',  r.vibes  ?? 3)}
-        <button type="submit" class="auth-submit" style="margin-top:8px;">Submit rating</button>
-        <div class="auth-error" id="rate-error"></div>
-      </form>
-    `;
-    // Wire close button (rendered dynamically, so not picked up by initial selector)
-    content.querySelector('[data-close-aux]').addEventListener('click', closeAuxModals);
-    // Live-update the value displays
-    content.querySelectorAll('#rate-form input[type=range]').forEach(input => {
-      const valSpan = input.parentNode.querySelector('.rate-val');
-      input.addEventListener('input', () => { valSpan.textContent = input.value; });
-    });
-    // Form submit
-    document.getElementById('rate-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const fd = new FormData(e.target);
-      const payload = {
-        cafe_id: c.id,
-        user_id: currentUser.id,
-        coffee: +fd.get('coffee'),
-        food:   +fd.get('food'),
-        work:   +fd.get('work'),
-        vibes:  +fd.get('vibes'),
-        updated_at: new Date().toISOString()
-      };
-      const { error } = await sb.from('ratings').upsert(payload);
-      if (error) {
-        const el = document.getElementById('rate-error');
-        el.textContent = error.message;
-        el.classList.add('show');
-        return;
-      }
-      closeAuxModals();
-      openModal(c.id);
-    });
-    openAux('rate-overlay');
-  });
-}
-
-async function openModal(id) {
+function openModal(id) {
   const c = CAFES.find(x => x.id === id);
   if (!c) return;
   modalCurrentId = id;
   const overlay = document.getElementById('modal-overlay');
   const modal = document.getElementById('modal');
-
-  // Render synchronously with no extras so the modal appears immediately
-  modal.innerHTML = modalHTML(c, null);
+  modal.innerHTML = modalHTML(c);
   modal.scrollTop = 0;
   overlay.classList.add('open');
   document.getElementById('modal-close').addEventListener('click', closeModal);
+  // wire vibe badge inside modal
   const mb = modal.querySelector('.vibe-badge');
   if (mb) mb.addEventListener('click', ev => { ev.stopPropagation(); showVibePop(mb, id); });
-  wireModalActions(c);
-
-  // Async: fetch wifi / restroom / ratings, then re-render in place
-  const extras = await fetchCafeExtras(id);
-  if (modalCurrentId !== id) return; // user may have switched cafes
-  modal.innerHTML = modalHTML(c, extras);
-  document.getElementById('modal-close').addEventListener('click', closeModal);
-  const mb2 = modal.querySelector('.vibe-badge');
-  if (mb2) mb2.addEventListener('click', ev => { ev.stopPropagation(); showVibePop(mb2, id); });
-  wireModalActions(c);
 }
 function closeModal() {
   document.getElementById('modal-overlay').classList.remove('open');
@@ -2410,7 +2219,6 @@ function closeAuxModals() {
   document.getElementById('coffee-overlay').classList.remove('open');
   document.getElementById('nominate-overlay').classList.remove('open');
   document.getElementById('auth-overlay').classList.remove('open');
-  document.getElementById('rate-overlay').classList.remove('open');
   const t = document.getElementById('tip-thanks');
   if (t) t.textContent = '';
 }
@@ -2609,7 +2417,7 @@ document.querySelectorAll('.share-opt').forEach(btn => {
 document.querySelectorAll('[data-close-aux]').forEach(b => {
   b.addEventListener('click', closeAuxModals);
 });
-['coffee-overlay', 'nominate-overlay', 'auth-overlay', 'rate-overlay'].forEach(id => {
+['coffee-overlay', 'nominate-overlay', 'auth-overlay'].forEach(id => {
   const ov = document.getElementById(id);
   ov.addEventListener('click', e => { if (e.target === ov) closeAuxModals(); });
 });
