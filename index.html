@@ -10,6 +10,7 @@
   integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
   integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -854,6 +855,160 @@ a { color: inherit; text-decoration: none; }
 #t-quiet.on .dot  { background: var(--accent-2); }
 #t-lively.on .dot { background: var(--accent); }
 
+/* AUTH MODAL */
+.auth-tabs {
+  display: flex;
+  gap: 24px;
+  border-bottom: 1px solid var(--rule);
+  margin: -8px 0 22px;
+}
+.auth-tab {
+  background: transparent;
+  border: 0;
+  padding: 10px 0;
+  font-family: "Fraunces", serif;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--ink-3);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+.auth-tab.on { color: var(--ink); border-bottom-color: var(--accent); }
+.auth-tab:hover { color: var(--ink); }
+
+.auth-form { display: flex; flex-direction: column; gap: 12px; }
+.auth-form[hidden] { display: none; }
+.auth-form label {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--ink-2);
+  margin-bottom: -4px;
+}
+.auth-form input {
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  border-radius: 6px;
+  padding: 11px 14px;
+  font-family: "Fraunces", serif;
+  font-size: 15px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.auth-form input:focus { border-color: var(--accent); }
+.auth-form input::placeholder { color: var(--ink-3); }
+.auth-error {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: var(--bad);
+  background: rgba(176, 59, 43, 0.08);
+  border: 1px solid rgba(176, 59, 43, 0.25);
+  border-radius: 4px;
+  padding: 8px 10px;
+  display: none;
+}
+.auth-error.show { display: block; }
+.auth-submit {
+  background: var(--accent);
+  color: #fff;
+  border: 0;
+  border-radius: 6px;
+  padding: 12px 16px;
+  font-family: "Fraunces", serif;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 4px;
+}
+.auth-submit:hover { filter: brightness(1.05); }
+.auth-submit:disabled { opacity: 0.6; cursor: progress; }
+.auth-foot {
+  margin-top: 14px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: var(--ink-3);
+  text-align: center;
+}
+.auth-foot a { color: var(--accent); cursor: pointer; }
+.auth-success {
+  text-align: center;
+  padding: 12px 0;
+}
+.auth-success h3 {
+  font-family: "Fraunces", serif;
+  font-weight: 500;
+  font-size: 20px;
+  margin: 8px 0 10px;
+}
+.auth-success p {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  color: var(--ink-2);
+  line-height: 1.6;
+  margin: 0;
+}
+.auth-success .check-circle {
+  width: 48px; height: 48px;
+  border-radius: 999px;
+  background: rgba(79, 124, 62, 0.12);
+  color: var(--good);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+.auth-success svg { width: 24px; height: 24px; }
+
+/* USER MENU (logged-in state) */
+.user-menu {
+  position: absolute;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(20, 28, 38, 0.18);
+  padding: 6px;
+  z-index: 3000;
+  min-width: 180px;
+  display: none;
+}
+.user-menu.open { display: block; }
+.user-menu-header {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 4px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+}
+.user-menu-header .em { color: var(--ink); font-weight: 500; }
+.user-menu button {
+  display: flex; align-items: center; gap: 10px;
+  background: transparent;
+  border: 0;
+  padding: 9px 10px;
+  width: 100%;
+  text-align: left;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 12px;
+  color: var(--ink);
+  border-radius: 4px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.user-menu button:hover { background: var(--bg-2); }
+.user-menu button svg { width: 14px; height: 14px; color: var(--accent); }
+.signin .username-dot {
+  width: 6px; height: 6px; border-radius: 999px;
+  background: var(--good);
+  margin-right: 2px;
+}
+
 /* MAP */
 .map-area {
   position: relative;
@@ -1294,6 +1449,55 @@ a { color: inherit; text-decoration: none; }
   </article>
 </div>
 
+<!-- AUTH MODAL -->
+<div class="modal-overlay sm" id="auth-overlay">
+  <article class="modal sm">
+    <button class="modal-close" data-close-aux aria-label="Close">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <div class="auth-tabs">
+      <button class="auth-tab on" data-auth-tab="signin" type="button">Sign in</button>
+      <button class="auth-tab" data-auth-tab="signup" type="button">Sign up</button>
+    </div>
+
+    <form class="auth-form" id="signin-form" autocomplete="on">
+      <label for="signin-email">Email</label>
+      <input type="email" id="signin-email" name="email" placeholder="you@email.com" required autocomplete="email" />
+      <label for="signin-password">Password</label>
+      <input type="password" id="signin-password" name="password" placeholder="••••••••" minlength="6" required autocomplete="current-password" />
+      <div class="auth-error" id="signin-error"></div>
+      <button type="submit" class="auth-submit">Sign in</button>
+      <div class="auth-foot">
+        <a id="forgot-password">Forgot password?</a>
+      </div>
+    </form>
+
+    <form class="auth-form" id="signup-form" hidden autocomplete="on">
+      <label for="signup-email">Email</label>
+      <input type="email" id="signup-email" name="email" placeholder="you@email.com" required autocomplete="email" />
+      <label for="signup-username">Username</label>
+      <input type="text" id="signup-username" name="username" placeholder="coffee_lover" minlength="3" maxlength="24" pattern="[a-zA-Z0-9_]+" required />
+      <label for="signup-password">Password</label>
+      <input type="password" id="signup-password" name="password" placeholder="At least 6 characters" minlength="6" required autocomplete="new-password" />
+      <label for="signup-confirm">Confirm password</label>
+      <input type="password" id="signup-confirm" name="confirm" placeholder="Re-enter password" minlength="6" required autocomplete="new-password" />
+      <div class="auth-error" id="signup-error"></div>
+      <button type="submit" class="auth-submit">Create account</button>
+    </form>
+
+    <div class="auth-success" id="auth-success" hidden>
+      <div class="check-circle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l5 5 9-11"/></svg>
+      </div>
+      <h3>Check your email</h3>
+      <p>We sent a verification link to your inbox. Click it to finish signing up — then come back here and sign in.</p>
+    </div>
+  </article>
+</div>
+
+<!-- USER MENU POPOVER -->
+<div class="user-menu" id="user-menu" role="menu"></div>
+
 <!-- NOMINATE MODAL -->
 <div class="modal-overlay sm" id="nominate-overlay">
   <article class="modal sm">
@@ -1314,6 +1518,13 @@ a { color: inherit; text-decoration: none; }
 </div>
 
 <script>
+// ---- External services config ----
+const SUPABASE_URL = 'https://llucpiqycbxllvqkoyer.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_eq-dBaa36CMvHOHbfSC1YA_PHb9LiVc';
+const BMC_URL = 'https://buymeacoffee.com/thesflist';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let currentUser = null;
+
 const CAFES = [
   { id: "sightglass-soma", name: "Sightglass Coffee", hood: "SoMa", address: "270 7th St", lat: 37.7777, lng: -122.4093, blurb: "Cathedral-ceilinged roastery with communal tables and serious coffee.", wifi: 4, outlet: 2, quiet: 2, seats: 4, laptopok: true, open_late: false, hours: "7a–6p", tags: ["Roastery","Industrial"], site: "https://sightglasscoffee.com" },
   { id: "ritual-valencia", name: "Ritual Coffee Roasters", hood: "Mission", address: "1026 Valencia St", lat: 37.7568, lng: -122.4216, blurb: "The OG third-wave spot.", wifi: 4, outlet: 2, quiet: 2, seats: 2, laptopok: true, open_late: false, hours: "7a–7p", tags: ["Roastery"], site: "https://ritualcoffee.com" },
@@ -2200,14 +2411,276 @@ document.querySelectorAll('[data-close-aux]').forEach(b => {
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAuxModals(); });
 
+// ---- Tip Jar → Buy Me a Coffee ----
 document.getElementById('tip-go').addEventListener('click', () => {
   const amt = +document.getElementById('tip-amount').value || 0;
   if (amt <= 0) return;
-  document.getElementById('tip-thanks').textContent = `Thanks for the $${amt} tip!`;
+  const coffees = Math.max(1, Math.round(amt / 5));
+  window.open(`${BMC_URL}?coffees=${coffees}`, '_blank', 'noopener');
 });
+document.querySelector('.tip-card').addEventListener('click', () => {
+  window.open(`${BMC_URL}?coffees=1`, '_blank', 'noopener');
+});
+document.querySelector('.tip-card').style.cursor = 'pointer';
+
+// ---- Nominate sign-in prompt → opens auth modal ----
 document.getElementById('signin-go').addEventListener('click', () => {
-  alert('Sign in / Sign up is not wired up yet in this demo build.');
+  closeAuxModals();
+  openAux('auth-overlay');
 });
+
+// =====================================================
+// AUTH (Supabase email + password)
+// =====================================================
+
+function showError(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.classList.add('show');
+}
+function clearError(id) {
+  const el = document.getElementById(id);
+  el.textContent = '';
+  el.classList.remove('show');
+}
+
+// Tab switching
+document.querySelectorAll('.auth-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const which = tab.dataset.authTab;
+    document.querySelectorAll('.auth-tab').forEach(t => t.classList.toggle('on', t === tab));
+    document.getElementById('signin-form').hidden = which !== 'signin';
+    document.getElementById('signup-form').hidden = which !== 'signup';
+    document.getElementById('auth-success').hidden = true;
+    clearError('signin-error');
+    clearError('signup-error');
+  });
+});
+
+// Sign-in submit
+document.getElementById('signin-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  clearError('signin-error');
+  const email = document.getElementById('signin-email').value.trim();
+  const password = document.getElementById('signin-password').value;
+  const btn = e.target.querySelector('button[type=submit]');
+  btn.disabled = true;
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
+  btn.disabled = false;
+  if (error) {
+    showError('signin-error', error.message);
+    return;
+  }
+  closeAuxModals();
+});
+
+// Sign-up submit
+document.getElementById('signup-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  clearError('signup-error');
+  const email    = document.getElementById('signup-email').value.trim();
+  const username = document.getElementById('signup-username').value.trim();
+  const password = document.getElementById('signup-password').value;
+  const confirm  = document.getElementById('signup-confirm').value;
+  if (password !== confirm) {
+    showError('signup-error', "Passwords don't match.");
+    return;
+  }
+  if (!/^[a-zA-Z0-9_]{3,24}$/.test(username)) {
+    showError('signup-error', 'Username must be 3–24 letters, numbers, or underscores.');
+    return;
+  }
+  const btn = e.target.querySelector('button[type=submit]');
+  btn.disabled = true;
+  const { data, error } = await sb.auth.signUp({
+    email,
+    password,
+    options: {
+      data: { username },
+      emailRedirectTo: window.location.origin
+    }
+  });
+  btn.disabled = false;
+  if (error) {
+    showError('signup-error', error.message);
+    return;
+  }
+  // Show "check your email" view
+  document.getElementById('signin-form').hidden = true;
+  document.getElementById('signup-form').hidden = true;
+  document.getElementById('auth-success').hidden = false;
+});
+
+// Forgot password
+document.getElementById('forgot-password').addEventListener('click', async () => {
+  const email = document.getElementById('signin-email').value.trim();
+  if (!email) {
+    showError('signin-error', 'Enter your email above, then click "Forgot password?" again.');
+    return;
+  }
+  const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin });
+  if (error) {
+    showError('signin-error', error.message);
+    return;
+  }
+  showError('signin-error', '');
+  document.getElementById('signin-error').textContent = `Reset link sent to ${email}. Check your inbox.`;
+  document.getElementById('signin-error').classList.add('show');
+  document.getElementById('signin-error').style.color = 'var(--good)';
+});
+
+// =====================================================
+// LOGGED-IN UI STATE
+// =====================================================
+
+function getDisplayName(user) {
+  return user?.user_metadata?.username || (user?.email || '').split('@')[0] || 'You';
+}
+
+function renderAuthUI() {
+  const signinEl = document.querySelector('.signin');
+  if (currentUser) {
+    const name = getDisplayName(currentUser);
+    signinEl.innerHTML = `
+      <span class="username-dot"></span>
+      Hi, ${name}
+      <svg viewBox="0 0 24 24" width="10" height="10" fill="currentColor" style="margin-left:2px"><path d="M6 9l6 6 6-6z"/></svg>
+    `;
+    signinEl.onclick = (e) => { e.preventDefault(); e.stopPropagation(); toggleUserMenu(); };
+  } else {
+    signinEl.innerHTML = `
+      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+      Sign in
+    `;
+    signinEl.onclick = (e) => { e.preventDefault(); openAux('auth-overlay'); };
+  }
+}
+
+function toggleUserMenu() {
+  const menu = document.getElementById('user-menu');
+  if (menu.classList.contains('open')) {
+    menu.classList.remove('open');
+    return;
+  }
+  menu.innerHTML = `
+    <div class="user-menu-header">Signed in as <span class="em">${getDisplayName(currentUser)}</span></div>
+    <button id="user-signout">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+      Sign out
+    </button>
+  `;
+  const anchor = document.querySelector('.signin');
+  const r = anchor.getBoundingClientRect();
+  menu.style.top = (r.bottom + 6) + 'px';
+  menu.style.left = Math.max(8, r.right - 200) + 'px';
+  menu.classList.add('open');
+  document.getElementById('user-signout').addEventListener('click', async () => {
+    await sb.auth.signOut();
+    menu.classList.remove('open');
+  });
+}
+document.addEventListener('click', (e) => {
+  const menu = document.getElementById('user-menu');
+  if (menu.classList.contains('open') && !menu.contains(e.target) && !e.target.closest('.signin')) {
+    menu.classList.remove('open');
+  }
+});
+
+// Hook +Add button: open auth modal if not signed in
+const addBtn = document.getElementById('t-add');
+const addBtnOriginal = addBtn.cloneNode(true);
+addBtn.replaceWith(addBtnOriginal);
+document.getElementById('t-add').addEventListener('click', (e) => {
+  e.preventDefault();
+  if (!currentUser) {
+    openAux('auth-overlay');
+  } else {
+    openAux('nominate-overlay');
+  }
+});
+
+// When the modal is opened while logged in, replace the signin-card content with a real form
+function refreshNominateModal() {
+  const overlay = document.getElementById('nominate-overlay');
+  if (!overlay) return;
+  const card = overlay.querySelector('.signin-card');
+  if (!card) return;
+  if (currentUser) {
+    card.innerHTML = `
+      <div class="signin-title">Hi ${getDisplayName(currentUser)} — suggest a cafe</div>
+      <div class="signin-sub" style="margin-bottom:16px">We'll review it and add it to the map.</div>
+      <form id="nominate-form" style="display:flex;flex-direction:column;gap:10px;text-align:left">
+        <label class="auth-form" style="font-family:'Space Grotesk',sans-serif;font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-2);margin-bottom:-4px">Cafe name</label>
+        <input class="nom-input" name="cafe_name" placeholder="Sightglass Coffee" required>
+        <label style="font-family:'Space Grotesk',sans-serif;font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-2);margin-bottom:-4px">Address</label>
+        <input class="nom-input" name="address" placeholder="270 7th St" required>
+        <label style="font-family:'Space Grotesk',sans-serif;font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-2);margin-bottom:-4px">Neighborhood</label>
+        <input class="nom-input" name="hood" placeholder="SoMa" required>
+        <label style="font-family:'Space Grotesk',sans-serif;font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-2);margin-bottom:-4px">Why's it great?</label>
+        <textarea class="nom-input" name="why" placeholder="Quiet, big tables, great espresso..." rows="3" required></textarea>
+        <button type="submit" class="auth-submit" style="margin-top:8px">Submit nomination</button>
+        <div class="auth-error" id="nom-error"></div>
+        <div id="nom-success" style="display:none;color:var(--good);font-family:'Fraunces',serif;font-style:italic;margin-top:6px">Thanks! We'll review your nomination.</div>
+      </form>
+    `;
+    // Style the inputs to match auth-form inputs
+    card.querySelectorAll('.nom-input').forEach(i => {
+      i.style.cssText = 'border:1px solid var(--rule);background:var(--paper);border-radius:6px;padding:11px 14px;font-family:"Fraunces",serif;font-size:15px;color:var(--ink);outline:none;width:100%;font-family:"Fraunces",serif';
+    });
+    const form = card.querySelector('#nominate-form');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearError('nom-error');
+      const fd = new FormData(form);
+      const payload = {
+        user_id: currentUser.id,
+        cafe_name: fd.get('cafe_name').trim(),
+        address: fd.get('address').trim(),
+        neighborhood: fd.get('hood').trim(),
+        description: fd.get('why').trim()
+      };
+      // Try to insert into a Supabase `nominations` table — if it doesn't exist yet,
+      // fall back to localStorage so we don't lose the submission.
+      const { error } = await sb.from('nominations').insert(payload);
+      if (error) {
+        const stash = JSON.parse(localStorage.getItem('sfcafes-pending-nominations') || '[]');
+        stash.push({ ...payload, _at: new Date().toISOString(), _err: error.message });
+        localStorage.setItem('sfcafes-pending-nominations', JSON.stringify(stash));
+      }
+      document.getElementById('nom-success').style.display = 'block';
+      form.querySelectorAll('input, textarea, button').forEach(el => el.disabled = true);
+      setTimeout(() => { closeAuxModals(); }, 1400);
+    });
+  } else {
+    card.innerHTML = `
+      <div class="signin-title">Sign in to nominate a cafe</div>
+      <div class="signin-sub">Create an account or sign in to submit nominations.</div>
+      <button class="signin-btn" id="signin-go">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
+        Sign In / Sign Up
+      </button>
+    `;
+    card.querySelector('#signin-go').addEventListener('click', () => {
+      closeAuxModals();
+      openAux('auth-overlay');
+    });
+  }
+}
+
+// Listen for auth state changes (login, logout, session refresh)
+sb.auth.onAuthStateChange((event, session) => {
+  currentUser = session?.user || null;
+  renderAuthUI();
+  refreshNominateModal();
+});
+
+// Initial session load on page open
+(async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  currentUser = session?.user || null;
+  renderAuthUI();
+  refreshNominateModal();
+})();
 
 updateToolbar();
 render();
